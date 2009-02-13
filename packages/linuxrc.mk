@@ -4,8 +4,8 @@ linuxrc_make_args = LD=$(TARGET)-ld
 linuxrc_install_depend = $(call find_package_file_fn,linuxrc.conf)
 
 linuxrc_install =								\
-  $(PACKAGE_MAKE) libexecdir=$(INSTALL_DIR)/linuxrc/usr/libexec install ;	\
-  i="$(INSTALL_DIR)/linuxrc/initrd.img" ;					\
+  $(PACKAGE_MAKE) libexecdir=$(PACKAGE_INSTALL_DIR)/usr/libexec install ;	\
+  i="$(PACKAGE_INSTALL_DIR)/initrd.img" ;					\
   rm -f $${i} ;									\
   : make platform-independant part of initrd ;					\
   conf="$(call find_package_file_fn,linuxrc,linuxrc.conf)" ;			\
@@ -14,9 +14,9 @@ linuxrc_install =								\
     exit 1;									\
   fi ;										\
   fakeroot /bin/bash -c "{							\
-    $(INSTALL_DIR)/linuxrc/sbin/mkinitrd_dev -d dev;				\
-    $(INSTALL_DIR)/linuxrc/sbin/mkinitrd					\
+    $(PACKAGE_INSTALL_DIR)/sbin/mkinitrd_dev -d $(PACKAGE_INSTALL_DIR)/dev;	\
+    $(PACKAGE_INSTALL_DIR)/sbin/mkinitrd					\
       -o $${i}									\
-      -l $(INSTALL_DIR)/linuxrc/usr/libexec/linuxrc				\
+      -l $(PACKAGE_INSTALL_DIR)/usr/libexec/linuxrc				\
       -c $${conf} ;								\
   }"
