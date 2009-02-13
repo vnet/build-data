@@ -63,12 +63,6 @@ ifneq (,$(linux_initrd_$(LINUX_ARCH)))
  linux_build_depend += linuxrc-install $(INSTALL_DIR)/linuxrc/initrd.img
 endif
 
-LINUX_BUILD_TARGET = \
-   ${shell case '$(ARCH)' in \
-      (ppc*|powerpc*) echo simpleImage.initrd.bamboo ;; \
-      (*) echo "vmlinux" ;; \
-     esac }
-
 linux_build =									\
   cd $(PACKAGE_BUILD_DIR) ;							\
   : copy embedded initrd into place for platforms that support one ;		\
@@ -76,7 +70,8 @@ linux_build =									\
     && mkdir -p "`dirname $(PACKAGE_BUILD_DIR)/$(linux_initrd_$(LINUX_ARCH))`"	\
     && cp $(INSTALL_DIR)/linuxrc/initrd.img					\
          $(PACKAGE_BUILD_DIR)/$(linux_initrd_$(LINUX_ARCH)) ;			\
-  $(LINUX_MAKE) $(MAKE_PARALLEL_FLAGS) $(LINUX_BUILD_TARGET)
+  $(LINUX_MAKE) $(MAKE_PARALLEL_FLAGS)						\
+    $(if $($(PLATFORM)_linux_build_image),$($(PLATFORM)_linux_build_image),vmlinux)
 
 linux_update_config_fn = \
   @$(BUILD_ENV) ; \
