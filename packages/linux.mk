@@ -73,22 +73,25 @@ linux_build =									\
   $(LINUX_MAKE) $(MAKE_PARALLEL_FLAGS)						\
     $(if $($(PLATFORM)_linux_build_image),$($(PLATFORM)_linux_build_image),vmlinux)
 
-linux_update_config_fn = \
-  @$(BUILD_ENV) ; \
-  cd $(PACKAGE_BUILD_DIR) ; \
-  tmp="`mktemp .config-XXXXXX`" ; \
-  cp .config $${tmp} ; \
-  $(LINUX_MAKE) $(1) ; \
-  : copy back resulting config if changed ; \
-  cmp --quiet $${tmp} .config \
-    || cp .config $(call find_package_file_fn,linux-$(PLATFORM).config) ; \
-  rm -f $${tmp}
+%-gconfig %-xconfig %-menuconfig: %-configure
+	@$(BUILD_ENV) ;									\
+	if [ "$(PACKAGE)" != linux ]; then						\
+	  $(call build_msg_fn, Config targets only apply to linux);			\
+	  exit 1;									\
+	fi ;										\
+	cd $(PACKAGE_BUILD_DIR) ;							\
+	: make a copy of config file so we can compare later ;				\
+	tmp="`mktemp .config-XXXXXX`" ;							\
+	cp .config $${tmp} ;								\
+	: call linux makefile to perform config ;					\
+	$(LINUX_MAKE) $(patsubst linux-%,%,$@) ;					\
+	: copy back resulting config if changed ;					\
+	cmp --quiet $${tmp} .config							\
+	  || cp .config $(call find_package_file_fn,linux,linux-$(PLATFORM).config) ;	\
+	rm -f $${tmp}
 
-linux-gconfig linux-xconfig linux-menuconfig: linux-configure
-	$(call linux_update_config_fn, $(patsubst linux-%,%,$@))
-
-linux_install = \
-  cd $(PACKAGE_BUILD_DIR) ; \
+linux_install =					\
+  cd $(PACKAGE_BUILD_DIR) ;			\
   : nothing to do for now
 
 linux_clean = rm -rf $(PACKAGE_BUILD_DIR)
