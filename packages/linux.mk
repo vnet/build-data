@@ -52,8 +52,8 @@ linux_configure = \
   } ; \
   $(LINUX_MAKE) Makefile prepare archprepare
 
-# kernel build depends on config file fragments for platform
-linux_build_depend = $(linux_config_files_for_platform)
+# kernel configure depends on config file fragments for platform
+linux_configure_depend = $(linux_config_files_for_platform)
 
 # ARCH dependent initrd
 linux_initrd_powerpc = arch/powerpc/boot/ramdisk.image.gz
