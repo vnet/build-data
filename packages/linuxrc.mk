@@ -3,9 +3,21 @@ linuxrc_make_args = LD=$(TARGET)-ld
 
 linuxrc_install_depend = $(call find_package_file_fn,linuxrc.conf)
 
-linuxrc_platform_script = $(call find_build_data_file_fn,packages/linuxrc-initrd-$(PLATFORM).sh)
+linuxrc_platform_script = \
+  $(call find_build_data_file_fn,packages/linuxrc-initrd-$(PLATFORM).sh)
 
 linuxrc_install_depend += $(linuxrc_platform_script)
+
+linuxrc_platform_makedev_script = \
+  $(call find_build_data_file_fn,packages/makedev-$(PLATFORM).sh)
+
+linuxrc_install_depend += $(linuxrc_platform_makedev_script)
+
+linuxrc_makedev =						\
+  $(INSTALL_DIR)/linuxrc/sbin/mkinitrd_dev -d dev ;		\
+  if [ ! -z "$(linuxrc_platform_makedev_script)" ]; then	\
+    . $(linuxrc_platform_makedev_script) ;			\
+  fi
 
 linuxrc_install =								\
   $(PACKAGE_MAKE) libexecdir=$(PACKAGE_INSTALL_DIR)/usr/libexec install ;	\
@@ -23,18 +35,18 @@ linuxrc_install =								\
   chmod 0755 $${tmp_dir} ;							\
   fakeroot /bin/bash -c "{							\
     set -eu$(BUILD_DEBUG) ;							\
-    $(PACKAGE_INSTALL_DIR)/sbin/mkinitrd_dev -d $${tmp_dir}/dev;	\
+    cd $${tmp_dir} ;								\
+    $(linuxrc_makedev) ;							\
     sh -vx $(PACKAGE_INSTALL_DIR)/sbin/mkinitrd					\
       -o $${tmp_dir}								\
-      -d $${tmp_dir}/dev						\
+      -d $${tmp_dir}/dev							\
       -l $(PACKAGE_INSTALL_DIR)/usr/libexec/linuxrc				\
       -c $${conf} ;								\
-    cd $${tmp_dir} ;								\
     if [ ! -z "$(linuxrc_platform_script)" ] ; then				\
       . $(linuxrc_platform_script) ;						\
     fi ;									\
-    rm -f $${initrd_img} ; \
-    mksquashfs $${tmp_dir} $${initrd_img} -all-root -no-duplicates ;	\
+    rm -f $${initrd_img} ;							\
+    mksquashfs $${tmp_dir} $${initrd_img} -all-root -no-duplicates ;		\
   }" ;										\
   : cleanup tmp directory ;							\
   rm -rf $${tmp_dir}

@@ -1,0 +1,5 @@
+# /etc/modules
+# Modules specified in this file will be loaded by the system
+# at boot time. They can be specified one per line, as:
+#   module [args...]
+

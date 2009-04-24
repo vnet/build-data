@@ -1,0 +1,176 @@
+#!/bin/bash
+# rc.functions - utility functions sourced in by the other rc scripts
+
+shopt -s extglob	# required for case in prompt_numb/prompt_addr
+
+cmdarg () {		# ARGS: ARGNAME
+    cmdarg_name=$1; shift
+    cmdarg_value=$(sed -n -e "s/.*${cmdarg_name}=\([^ ]*\).*/\1/p" /proc/cmdline)
+    eval ${cmdarg_name}=$cmdarg_value
+}
+
+error() {
+    echo $@ failed\!
+    sleep 3
+    exit 0
+}
+
+warn() {
+    echo % $@ failed
+}
+
+dprint() {
+    printf "%-50s" "$@"
+}
+
+dok() {
+    echo "[  OK  ]"
+}
+
+dfail() {
+    echo "[FAILED]"
+}
+
+derror() {
+    echo "[FAILED]"
+    error $@
+}
+
+dstart() {
+    dprint "Starting $1"
+    $@ >& /tmp/dstart.log
+    if [ $? != 0 ]; then
+	echo "[FAILED]"
+	cat /tmp/dstart.log
+	#sleep 3
+	#exit 0
+    else
+	if [ -s /tmp/dstart.log ]; then
+	    echo "[STARTED]"
+	    cat /tmp/dstart.log
+	else
+	    dok
+	fi
+    fi
+}
+
+dstart_crit() {
+    dprint "Starting $1"
+    $@ >& /tmp/dstart.log
+    if [ $? != 0 ]; then
+	echo "[FAILED]"
+	cat /tmp/dstart.log
+        echo ""
+        echo "System boot halted. Critial component load failed."
+	sleep 3
+	exit 0
+    else
+	if [ -s /tmp/dstart.log ]; then
+	    echo "[STARTED]"
+	    cat /tmp/dstart.log
+	else
+	    dok
+	fi
+    fi
+}
+
+yorn () {		# ARGS: PROMPT...
+    while true
+    echo -n "$@? [yes/no]: "
+    do
+	read reply
+	case $reply in
+	y|yes)
+		return 0;;
+	n|no)	return 1;;
+	*)	echo "There is no default - please answer yes or no.";;
+	esac
+    done
+}
+
+prompt_text () {	# ARGS: VARNAME DEFAULT PROMPT...
+    text_varname=$1; shift
+    text_default=$1; shift
+    echo -n "$@: "
+    [ -n "$text_default" ] && echo -n "($text_default) "
+    while true
+    do
+	read text_reply
+	case $text_reply in
+	"")	if [ -n "$text_default" ]
+		then
+		    eval ${text_varname}=$text_default
+		    return 0
+		else
+		    echo -n "You must enter a name. Please try again: "
+		fi;;
+	*)	eval ${text_varname}=$text_reply
+		return 0;;
+	esac
+    done
+}
+
+prompt_numb () {	# ARGS: VARNAME DEFAULT PROMPT...
+    numb_varname=$1; shift
+    numb_default=$1; shift
+    echo -n "$@"
+    [ -n "$numb_default" ] && echo -n " [$numb_default]"
+    echo -n ": "
+    while true
+    do
+	read numb_reply
+	case $numb_reply in
+        +([0-9]))
+		eval ${numb_varname}=$numb_reply
+		return 0;;
+	"")	if [ -n "$numb_default" ]
+		then
+		    eval ${numb_varname}=$numb_default
+		    return 0
+		fi
+		echo -n "There is no default. Please enter a number: ";;
+	*)	echo -n "Please enter a decimal number: ";;
+	esac
+    done
+}
+
+check_addr () {
+    addr=$1; shift
+    for i in ${addr//./ } ; do
+	if [ "$i" -gt 255 ] ; then
+
+	    echo "Invalid IP address ${addr}: octet value $i is greater than 255"
+	    return 1
+        fi
+    done;
+    return 0
+}
+
+prompt_addr () {	# ARGS: VARNAME DEFAULT PROMPT...
+    addr_varname=$1; shift
+    addr_default=$1; shift
+    while true
+    do
+        echo -n "$@: "
+        [ -n "$addr_default" ] && echo -n "[$addr_default] "
+
+	read addr_reply
+	case $addr_reply in
+	+([0-9]).+([0-9]).+([0-9]).+([0-9]))
+		if check_addr $addr_reply
+		then
+		    eval ${addr_varname}=$addr_reply
+		    return 0
+		else
+		    continue
+		fi;;
+	"")	if [ -n "$addr_default" ]
+		then
+		    eval ${addr_varname}=$addr_default
+		    return 0
+		fi
+		echo "There is no default. Please enter an IP address";;
+	*)	echo "Please enter a 4-octet, dot-separated IP address (#.#.#.#)";;
+	esac
+    done
+}

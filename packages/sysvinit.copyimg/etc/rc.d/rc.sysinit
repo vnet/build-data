@@ -1,0 +1,4 @@
+#!/bin/bash
+# rc.sysinit - system startup
+hostname noname
+

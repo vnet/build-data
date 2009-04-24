@@ -1,0 +1,206 @@
+#!/bin/bash
+
+# Network Bring Up Script -- Check for configuration and bring up ports.
+# Later, this procedure should be handled by ayrconfigd/ayrsh
+
+. /etc/rc.d/rc.functions
+
+function parse_address () # one arg: "address/mask"
+{ 
+  local address="${1}"
+  local l=${#address}
+  local octets=0
+  local start=0
+  local a=0
+  for (( offset = 0; offset < l ; offset++ )) ; do
+    local c="${address:offset:1}"
+    case "${c}" in
+      ([0-9]) ;;
+      (\.|/)  local octet="${address:start:offset-start}"
+              if [ "${octet}" == "" ] ; then  # two dots in a row
+                echo "Invalid IP address: ${address}"
+                return 1
+              fi
+
+              if (( octet < 0 || octet > 255 )) ; then
+                echo "Invalid address: ${octet} does not lie between 0-255"
+                return 1
+              fi
+
+              if (( octets > 3 )) ; then
+                echo "More than 32 bits of IP address: ${address}"
+                return 1
+              fi
+
+              a=$(( ( a << 8 ) + octet ))
+              octets=$(( octets + 1 ))
+              start=$(( offset + 1 ))
+              if [ "${c}" == "/" ] ; then
+                 break
+              fi
+              ;;
+      (*)     echo "Invalid IP address: ${address}"
+              return 1 ;;
+    esac
+  done
+  
+  # Allow abbreviation "10.1/16" of "10.1.0.0/16"
+  for (( ; octets < 4 ; octets++ )) ; do
+    a=$(( a << 8 ))
+  done
+
+  local slash=""
+  for (( offset = start ; offset < l ; offset++ )) ; do
+    local c="${address:offset:1}"
+    case "${c}" in
+      ([0-9]) slash="${start}" ;;
+      (*) echo "Invalid IP address mask: ${address}"
+          return 1 ;;
+    esac
+  done
+
+  if [ "${slash}" == "" ] ; then
+    echo "IP /mask not specified: ${address}"
+    return 1
+  fi
+
+  local mask="${address:slash}"
+
+  if (( mask < 1 || mask > 32 )) ; then
+    echo "Out of range IP mask: ${address}"
+    return 1
+  fi
+
+  mask=$(( ( 0xFFFFFFFF << ( 32 - mask ) ) & 0xFFFFFFFF ))
+
+  address="$(( (a >> 24) & 255)).$(( (a >> 16) & 255)).$(( (a >> 8) & 255)).$(( a & 255))"
+  mask="$(( (mask >> 24) & 255)).$(( (mask >> 16) & 255)).$(( (mask >> 8) & 255)).$(( mask & 255))"
+
+  echo "${address} ${mask}"
+}
+
+function prompt {
+    read -p "$3 [$2]: " tmp;
+    eval "$1=$2";
+    if [ "$tmp" != "" ]; then
+	eval "$1=$tmp";
+    fi
+}
+
+# Read config file (if present)
+NET_CONFIG_FILE=/etc/rc.d/network.conf
+if [ -f $NET_CONFIG_FILE ]; then
+  . $NET_CONFIG_FILE;
+fi
+
+IPV4_GATEWAY_PROMPTED=no
+IPV4_GATEWAY_ROUTED=no
+
+function config_ipv4_dev {
+    local if_name=$1;
+    local r t a m;
+
+    echo "Configuring network for interface $if_name";
+    echo "Enter IP in a.b.c.d/z notation or dhcp.";
+
+    while true; do
+	prompt "t" "10.0.0.0/8" "  IP address and blocksize";
+	if [ $t = "dhcp" -o $t = "d" ] ; then
+	    r="dhcp dhcp";
+	    IPV4_GATEWAY_PROMPTED=yes;
+	    break;
+	fi
+	if r=`parse_address $t`; then
+	    break;
+	fi;
+    done;
+
+    a="IPV4_ADDRESS_$if_name";
+    m="IPV4_NETMASK_$if_name";
+    eval "$a=${r/ */}";
+    eval "$m=${r/* /}";
+    echo "$a=${!a}" >> $NET_CONFIG_FILE;
+    echo "$m=${!m}" >> $NET_CONFIG_FILE;
+
+    if [ "$IPV4_GATEWAY_PROMPTED" = "no" ]; then
+	prompt "IPV4_GATEWAY" $if_name "IP gateway device, address or none";
+	IPV4_GATEWAY_PROMPTED=yes;
+	echo "IPV4_GATEWAY=$IPV4_GATEWAY" >> $NET_CONFIG_FILE;
+    fi
+}
+
+function start_ipv4_dev {
+    local if_name=$1;
+    local a="IPV4_ADDRESS_$if_name";
+    local m="IPV4_NETMASK_$if_name";
+
+    if [ "$if_name" = "eobc" ]; then
+    	slotnum=`cat /proc/komodo_plus_dpram | cut -d " " -f 2`
+    	let "lastoctet = $slotnum * 10 + 1"
+        echo "    eobc:	127.0.0.$lastoctet 255.0.0.0"
+  	doit ifconfig $if_name 127.0.0.$lastoctet netmask 255.0.0.0 up
+	return
+    fi
+
+    if [ "${!a}"  = "" ]; then
+	config_ipv4_dev $if_name;
+    fi;
+
+    if [ "${!a}"  = "dhcp" ]; then
+	mkdir -p /etc/udhcpc;
+	(cd /etc && ln -sf udhcpc/resolv.conf resolv.conf);
+	doit udhcpc --now --interface=${if_name} --script=/etc/sysconfig/network-scripts/udhcpc.script 1> /dev/null 2> /dev/null;
+    else
+	echo "    $if_name:	${!a} ${!m}"
+	doit ifconfig $if_name ${!a} netmask ${!m};
+    fi;
+}
+
+function config_gateway {
+		if [ "$IPV4_GATEWAY" != "" ]; then 
+			echo "    default:	$IPV4_GATEWAY"
+                	doit route add default gw $IPV4_GATEWAY 1> /dev/null 2> /dev/null;
+		fi
+	}
+
+
+function doit {
+#    echo $*
+    eval "$*";
+}
+
+# FIXME make this platform dependent
+INTERFACES=`cat /proc/net/dev | grep : | sed s/:.*// | sed s/lo//`;
+
+case "$1" in
+    start|"")
+	if [ "$VERBOSE" != no ]; then
+	    echo "Starting network... "
+	fi
+	doit ifconfig lo 127.0.0.1 netmask 255.255.255.255 up
+	#for i in $INTERFACES; do
+	#    start_ipv4_dev $i;
+	#done
+	#config_gateway;
+
+
+
+	echo "done";;
+
+    stop)
+	if [ "$VERBOSE" != no ]; then
+	    echo -n "Shutting down network... "
+	fi
+	for i in $INTERFACES; do
+	  doit ifconfig $i down;
+	done;
+	doit ifconfig lo down;
+	echo "done";;
+
+    *)
+	echo "Usage: $0 {start|stop}" >&2
+	exit 1;;
+esac
+
+exit 0
+

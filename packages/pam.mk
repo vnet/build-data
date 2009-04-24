@@ -1,12 +1,11 @@
-pam_configure_args = --disable-docdir
-pam_configure_args += --disable-static
+pam_configure_args = --disable-static
 
 # pam local functions for image install
 pam_security_find_shared_libs_fn = \
   find $(1) \
     -regex '.*/security/[a-z_]+.so'
 
-pam_security_image_copy = \
+pam_security_select_files = \
   [[ -d lib$($(ARCH)_libdir) ]] \
     && $(call pam_security_find_shared_libs_fn,lib$($(ARCH)_libdir))
 
