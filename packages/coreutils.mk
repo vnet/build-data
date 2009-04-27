@@ -1,10 +1,3 @@
-# pretend we don't have perl to avoid building broken man pages which won't
-# update when cross compiling.
-coreutils_configure_env = PERL=""
-
-# otherwise man pages get installed in / resulting in build failures
-coreutils_install_args = mandir=$(PACKAGE_INSTALL_DIR)/man
-
 # garbage collect a bunch of stuff we are unlikely to want
 coreutils_bin_excludes = \
   cksum comm csplit cut dir dircolors expand factor fmt fold groups \
@@ -13,4 +6,3 @@ coreutils_bin_excludes = \
   tac timeout tr truncate tsort unexpand uniq unlink users vdir whoami
 
 coreutils_image_exclude = bin/$(foreach f,$(coreutils_bin_excludes),bin/$(f))
-
