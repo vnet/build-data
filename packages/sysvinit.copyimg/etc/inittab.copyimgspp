@@ -40,8 +40,9 @@ pf::powerfail:/sbin/poweroff -n -h
 5:2345:respawn:/sbin/mingetty vc/5
 6:2345:respawn:/sbin/mingetty vc/6}}
 
-{if SERIAL_CONSOLE
+{if SERIAL_CONSOLE_AGETTY
   {comment Serial consoles for platform}
-  {text
-T0:23:respawn:/sbin/mingetty {SERIAL_CONSOLE}}}
+  {comment text
+T0:23:respawn:{SERIAL_CONSOLE_AGETTY}}}
 
+a0:23:respawn:/sbin/sulogin

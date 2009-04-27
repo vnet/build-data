@@ -19,7 +19,7 @@ openssl_configure = \
   cp --no-dereference --recursive --symbolic-link \
     $(call find_source_fn,openssl)/* . ; \
   ./Configure \
-    ${shell case '$(ARCH)' in \
+    ${shell case '$(BASIC_ARCH)' in \
           (i?86) echo linux-elf ;; \
 	  (ppc) echo linux-ppc ;; \
           (*) echo 'linux-$(NATIVE_ARCH)' ;; esac } \

@@ -10,4 +10,5 @@ bash_configure_args += --with-installed-readline=$(INSTALL_DIR)/readline
 bash_CPPFLAGS = $(call installed_includes_fn, ncurses readline)
 bash_LDFLAGS = $(call installed_libs_fn, ncurses readline)
 
+bash_image_exclude = bin/bashbug
 bash_image_install = ln -sf /bin/bash bin/sh
