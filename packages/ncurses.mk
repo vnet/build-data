@@ -12,7 +12,7 @@ ncurses_configure_args += --disable-widec --disable-colorfgbg \
                            --disable-bsdpad --disable-hashmap \
                            --disable-xmc-glitch \
 	                   --without-gpm --without-ada --without-cxx \
-	                   --without-cxx-binding --without-progs
+	                   --without-cxx-binding
 
 # Override normal install because we need to make links
 # include/term.h -> include/ncurses/term.h, etc.
