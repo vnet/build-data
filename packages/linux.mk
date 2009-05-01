@@ -60,7 +60,7 @@ linux_initrd_powerpc = arch/powerpc/boot/ramdisk.image.gz
 
 # Add dependency for initrd if its built into linux image
 ifneq (,$(linux_initrd_$(LINUX_ARCH)))
- linux_build_depend += linuxrc-install $(INSTALL_DIR)/linuxrc/initrd.img
+ linux_build_depend += linuxrc-install $(linuxrc_initrd_image)
 endif
 
 linux_build =									\
@@ -68,7 +68,7 @@ linux_build =									\
   : copy embedded initrd into place for platforms that support one ;		\
   [[ -n "$(linux_initrd_$(LINUX_ARCH))" ]]					\
     && mkdir -p "`dirname $(PACKAGE_BUILD_DIR)/$(linux_initrd_$(LINUX_ARCH))`"	\
-    && cp $(INSTALL_DIR)/linuxrc/initrd.img					\
+    && cp $(linuxrc_initrd_image)						\
          $(PACKAGE_BUILD_DIR)/$(linux_initrd_$(LINUX_ARCH)) ;			\
   $(LINUX_MAKE) $(MAKE_PARALLEL_FLAGS)						\
     $(if $($(PLATFORM)_linux_build_image),$($(PLATFORM)_linux_build_image),vmlinux)

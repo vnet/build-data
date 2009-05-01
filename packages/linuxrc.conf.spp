@@ -1,16 +1,23 @@
 # The base writable root must have these dirs:
 #   /proc, /dev, /initrd, /images, /changes, /ro, /rw, /union
 
+{if LINUXRC_INITRD_TYPE != ext2
+  {quote {
 mount ${rw:-/dev/ubd/1} /mnt ${rw_fstype:-auto}
 
 # The first pivot uses MNT_DETACH to unmount the initrd after
 # linuxrc exec's /sbin/init
-pivot mnt initrd
+pivot mnt initrd}}}
 
-check /images/${ro:-ro}.img.md5
-mount /images/${ro:-ro}.img /ro loop
+{if LINUXRC_INITRD_TYPE = ext2
+  {text
+# For ramdisk re-mount root read/write so we can mount
+mount /dev/root / remount}}
 
-mount unionfs /union unionfs dirs=/changes/${ro:-ro}.img=rw:/ro=ro
+check /images/{quote {${ro:-ro}}}.img.md5
+mount /images/{quote {${ro:-ro}}}.img /ro loop
+
+mount unionfs /union unionfs dirs=/changes/{quote ${ro:-ro}}.img=rw:/ro=ro
 
 # The second pivot to the union retains access to /readonly and
 # /readonly/writable components
