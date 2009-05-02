@@ -59,9 +59,7 @@ linux_configure_depend = $(linux_config_files_for_platform)
 linux_initrd_powerpc = arch/powerpc/boot/ramdisk.image.gz
 
 # Add dependency for initrd if its built into linux image
-ifneq (,$(linux_initrd_$(LINUX_ARCH)))
- linux_build_depend += linuxrc-install $(linuxrc_initrd_image)
-endif
+linux_build_depend += $(linuxrc_initrd_image)
 
 linux_build =									\
   cd $(PACKAGE_BUILD_DIR) ;							\
