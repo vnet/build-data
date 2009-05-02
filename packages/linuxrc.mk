@@ -34,9 +34,10 @@ linuxrc_platform_script = \
 if_eq_then_fn = $(if $(subst $(1),,$(2)),,$(3))
 linuxrc_install_depend += $(call if_eq_then_fn,$(linuxrc_initrd_type),ext2,$(PLATFORM_IMAGE_DIR)/ro.img)
 
-linuxrc_install =								\
-  $(PACKAGE_MAKE) libexecdir=$(PACKAGE_INSTALL_DIR)/usr/libexec install ;	\
-  initrd_img="$(PACKAGE_INSTALL_DIR)/initrd.$(linuxrc_initrd_type)" ;		\
+linuxrc_initrd_image_install =							\
+  @$(BUILD_ENV) ;								\
+  linuxrc_install_dir=$(INSTALL_DIR)/linuxrc ;					\
+  initrd_img="$${linuxrc_install_dir}/initrd.$(linuxrc_initrd_type)" ;		\
   rm -f $${initrd_img} ;							\
   : make platform-independant part of initrd ;					\
   conf="$(call find_package_file_fn,linuxrc,linuxrc.conf.spp)" ;		\
@@ -45,23 +46,23 @@ linuxrc_install =								\
     exit 1;									\
   fi ;										\
   : strip linuxrc symbols ;							\
-  linuxrc_tmp="`mktemp $(PACKAGE_INSTALL_DIR)/linuxrc-exe-XXXXX`" ;		\
-  cp $(PACKAGE_INSTALL_DIR)/usr/libexec/linuxrc $${linuxrc_tmp} ;		\
+  linuxrc_tmp="`mktemp $${linuxrc_install_dir}/linuxrc-exe-XXXXX`" ;		\
+  cp $${linuxrc_install_dir}/usr/libexec/linuxrc $${linuxrc_tmp} ;		\
   chmod +x $${linuxrc_tmp} ;							\
   $(TARGET)-strip $${linuxrc_tmp} ;						\
   : use pre-processor to generate conf file ;					\
-  conf_tmp="`mktemp $(PACKAGE_INSTALL_DIR)/linuxrc-conf-XXXXX`" ;		\
+  conf_tmp="`mktemp $${linuxrc_install_dir}/linuxrc-conf-XXXXX`" ;		\
   env LINUXRC_INITRD_TYPE=$(linuxrc_initrd_type)				\
     spp -o $${conf_tmp} $${conf} ;						\
   : now build image ;								\
-  tmp_dir="`mktemp -d $(PACKAGE_INSTALL_DIR)/linuxrc-image-XXXXXX`" ;		\
+  tmp_dir="`mktemp -d $${linuxrc_install_dir}/linuxrc-image-XXXXXX`" ;		\
   chmod 0755 $${tmp_dir} ;							\
   trap "rm -rf $${tmp_dir}" err ;						\
   fakeroot /bin/bash -c "{							\
     set -eu$(BUILD_DEBUG) ;							\
     cd $${tmp_dir} ;								\
     $(linuxrc_makedev) ;							\
-    sh -vx $(PACKAGE_INSTALL_DIR)/sbin/mkinitrd					\
+    sh $${linuxrc_install_dir}/sbin/mkinitrd					\
       -o $${tmp_dir}								\
       -d $${tmp_dir}/dev							\
       -l $${linuxrc_tmp}							\
@@ -79,3 +80,11 @@ linuxrc_install =								\
   }" ;										\
   : cleanup tmp directory ;							\
   rm -rf $${tmp_dir}
+
+$(linuxrc_initrd_image): linuxrc-install
+	$(linuxrc_initrd_image_install)
+
+linuxrc_install =					\
+  $(PACKAGE_MAKE)					\
+	libexecdir=$(PACKAGE_INSTALL_DIR)/usr/libexec	\
+	install
