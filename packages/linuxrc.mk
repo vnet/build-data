@@ -32,7 +32,8 @@ linuxrc_platform_script = \
   $(call find_build_data_file_fn,packages/linuxrc-initrd-$(PLATFORM).sh)
 
 if_eq_then_fn = $(if $(subst $(1),,$(2)),,$(3))
-linuxrc_install_depend += $(call if_eq_then_fn,$(linuxrc_initrd_type),ext2,$(PLATFORM_IMAGE_DIR)/ro.img)
+
+# linuxrc_install_depend += $(call if_eq_then_fn,$(linuxrc_initrd_type),ext2,$(PLATFORM_IMAGE_DIR)/ro.img)
 
 linuxrc_initrd_image_install =							\
   @$(BUILD_ENV) ;								\
