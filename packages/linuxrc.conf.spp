@@ -2,8 +2,8 @@
 #   /proc, /dev, /initrd, /images, /changes, /ro, /rw, /union
 
 {if LINUXRC_INITRD_TYPE = squashfs
-  {quote {
-mount ${rw:-/dev/ubd/1} /mnt ${rw_fstype:-auto}
+  {text 
+mount {quote ${rw:-/dev/ubd/1}} /mnt {quote {${rw_fstype:-auto}}}
 
 # The first pivot uses MNT_DETACH to unmount the initrd after
 # linuxrc exec's /sbin/init
@@ -24,7 +24,7 @@ pivot union mnt
 mount sysfs /sys sysfs
 
 # We're done. linuxrc will now exec /sbin/init
-}}}
+}}
 
 {if LINUXRC_INITRD_TYPE = ext2
   {text
