@@ -19,6 +19,9 @@ linuxrc_makedev =						\
 linuxrc_make_initrd_fn_squashfs = \
   mksquashfs $(1) $(2) -all-root -no-duplicates
 
+linuxrc_make_initrd_fn_nfs = \
+  mksquashfs $(1) $(2) -all-root -no-duplicates
+
 linuxrc_initrd_size = 8192
 linuxrc_make_initrd_fn_ext2 = \
   e2fsimage -d $(1) -f $(2) -s $(linuxrc_initrd_size)
