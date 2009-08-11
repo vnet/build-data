@@ -19,6 +19,9 @@ linuxrc_makedev =						\
 linuxrc_make_initrd_fn_squashfs = \
   mksquashfs $(1) $(2) -all-root -no-duplicates
 
+linuxrc_make_initrd_fn_nfs = \
+  mksquashfs $(1) $(2) -all-root -no-duplicates
+
 linuxrc_initrd_size = 8192
 linuxrc_make_initrd_fn_ext2 = \
   e2fsimage -d $(1) -f $(2) -s $(linuxrc_initrd_size)
@@ -32,7 +35,8 @@ linuxrc_platform_script = \
   $(call find_build_data_file_fn,packages/linuxrc-initrd-$(PLATFORM).sh)
 
 if_eq_then_fn = $(if $(subst $(1),,$(2)),,$(3))
-linuxrc_install_depend += $(call if_eq_then_fn,$(linuxrc_initrd_type),ext2,$(PLATFORM_IMAGE_DIR)/ro.img)
+
+# linuxrc_install_depend += $(call if_eq_then_fn,$(linuxrc_initrd_type),ext2,$(PLATFORM_IMAGE_DIR)/ro.img)
 
 linuxrc_initrd_image_install =							\
   @$(BUILD_ENV) ;								\
