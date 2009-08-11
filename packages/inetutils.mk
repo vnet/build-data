@@ -1,3 +1,5 @@
+inetutils_configure_args = --localstatedir=/var
+
 # garbage collect a bunch of stuff we are unlikely to want
 inetutils_bin_excludes =			\
   libexec/ftpd					\
