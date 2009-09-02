@@ -24,4 +24,7 @@ gdb_configure_args += --with-uiout=no
 # gdb currently does not compile with -Werror for gcc-3.4.2
 gdb_configure_args += --disable-werror
 
-gdb_configure_host_and_target = --build=local --host=$(TARGET) --target=$(TARGET)
+gdb_target = $(TARGET)
+
+gdb_configure_host_and_target = \
+  --build=local --host=$(TARGET) --target=$(gdb_target)
