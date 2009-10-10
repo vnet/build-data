@@ -22,4 +22,17 @@ ompi_configure_args = $(ompi_configure_args_$(TARGET)) \
 
 ompi_configure_prefix = --prefix=$(final_prefix)
 
+ompi_configure =				\
+  s=$(call find_source_fn,$(PACKAGE_SOURCE)) ;	\
+  if [ ! -f $$s/configure ] ; then		\
+    cd $$s ;					\
+    ./autogen.sh -no-ompi ;			\
+  fi ;						\
+  cd $(PACKAGE_BUILD_DIR) ;			\
+  env $(CONFIGURE_ENV)				\
+    $$s/configure				\
+      $(if $(ARCH:native=),--host=$(TARGET),)	\
+      $(ompi_configure_prefix)			\
+      $(ompi_configure_args)
+
 ompi_install_args = DESTDIR='$(PACKAGE_INSTALL_DIR)'
