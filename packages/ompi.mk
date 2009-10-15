@@ -9,10 +9,12 @@ ompi_configure_depend = clib-install svm-install
 # target dependent configure args
 # PLATFORM=qasmp
 ompi_configure_args_ppc-q-linux = \
+  CXX=none \
   --build=i386-unknown-linux-gnu
 
 # PLATFORM=qsp
 ompi_configure_args_ppc-qsp-linux = \
+  CXX=none \
   --build=i386-unknown-linux-gnu
 
 # PLATFORM=native, NOTE: $(TARGET) is the empty string
@@ -22,7 +24,8 @@ ompi_configure_args_ =
 ompi_configure_args = $(ompi_configure_args_$(TARGET)) \
   --with-platform=$(ompi_platform_dir)/cisco/hlfr/ebuild \
   --with-crsvm=$(call package_install_dir_fn,svm) \
-  --with-clib=$(call package_install_dir_fn,clib)
+  --with-clib=$(call package_install_dir_fn,clib) \
+  --enable-monitoring
 
 ompi_configure_prefix = --prefix=$(final_prefix)
 
