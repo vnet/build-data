@@ -13,7 +13,6 @@ ompi_configure_args_ppc-q-linux = \
 
 # PLATFORM=qsp
 ompi_configure_args_ppc-qsp-linux = \
-  CXX=none \
   --build=i386-unknown-linux-gnu
 
 # PLATFORM=native, NOTE: $(TARGET) is the empty string
@@ -41,3 +40,11 @@ ompi_configure =				\
       $(ompi_configure_args)
 
 ompi_install_args = DESTDIR='$(PACKAGE_INSTALL_DIR)'
+
+# Remove any installed libtool .la files, so that dependent packages
+# that use libtool don't get confused by paths embedded in the .la files
+# that do not reflect the DESTDIR used in the install of ompi.
+# This is simpler than trying to "fix" the paths inside the .la files,
+# since we won't be using the .la files on the CRS anyway.
+ompi_post_install = rm $(PACKAGE_INSTALL_DIR)/$(final_prefix)/*/*.la
+
