@@ -17,7 +17,7 @@
 # to the dummy folder.
 #
 # Andrei Agapi, September 2009.
-
+ 
 host_particle=$(if $(ARCH:native=),--host=$(TARGET),)
 
 PARENT_ABS_PATH=$(shell dirname $(PACKAGE_BUILD_DIR))
@@ -35,8 +35,8 @@ db_configure = \
    echo "cd $(PARENT_ABS_PATH)/.db_copy/build_unix" ; \
    cd $(PARENT_ABS_PATH)/.db_copy/build_unix ; \
    \
-   echo "../dist/configure --libdir=$(PACKAGE_INSTALL_DIR)/$(arch_lib_dir) --prefix=$(PACKAGE_INSTALL_DIR) $(host_particle)" ; \
-   ../dist/configure $(db_configure_args) --libdir=$(PACKAGE_INSTALL_DIR)/$(arch_lib_dir) --prefix=$(PACKAGE_INSTALL_DIR) $(host_particle) ; \
+   echo "../dist/configure --enable-o_direct --libdir=$(PACKAGE_INSTALL_DIR)/$(arch_lib_dir) --prefix=$(PACKAGE_INSTALL_DIR) $(host_particle)" ; \
+   ../dist/configure $(db_configure_args)  --enable-o_direct --libdir=$(PACKAGE_INSTALL_DIR)/$(arch_lib_dir) --prefix=$(PACKAGE_INSTALL_DIR) $(host_particle) ; \
    \
    echo "cd $(PARENT_ABS_PATH)" ; \
    cd $(PARENT_ABS_PATH) ; \
