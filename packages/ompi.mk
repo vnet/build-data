@@ -22,7 +22,9 @@ ompi_configure_args_ =
 ompi_configure_args = $(ompi_configure_args_$(TARGET)) \
   --with-platform=$(ompi_platform_dir)/cisco/hlfr/ebuild \
   --with-crsvm=$(call package_install_dir_fn,svm) \
-  --with-clib=$(call package_install_dir_fn,clib)
+  --with-crsvm-libdir=$(call installed_lib_fn,svm) \
+  --with-clib=$(call package_install_dir_fn,clib) \
+  --with-clib-libdir=$(call installed_lib_fn,clib)
 
 ompi_configure_prefix = --prefix=$(final_prefix)
 
