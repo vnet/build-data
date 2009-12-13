@@ -6,11 +6,12 @@
 # Now: If not overriden below, configure was modified s.t. with-sfs and with-db default to ppc7450 ebuild dirs (currently build-root/install-ppc7450
 # ($)/sfslite and ($)/db respectively); also, gmp is looked up; but again, they are all overridden below.
 
-dht_configure_depend = db-install sfslite-install gmp-install elog-install
+#dht_configure_depend = db-install sfslite-install gmp-install elog-install
+dht_configure_depend = db-install sfslite-install gmp-install
 
-dht_CPPFLAGS = $(call installed_includes_fn, elog)
+#dht_CPPFLAGS = $(call installed_includes_fn, elog)
 
-dht_LDFLAGS = $(call installed_libs_fn, elog)
+#dht_LDFLAGS = $(call installed_libs_fn, elog)
 
 dht_configure_args += --with-db=$(INSTALL_DIR)/db
 
