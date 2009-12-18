@@ -19,3 +19,5 @@ dht_configure_args += --with-sfs=$(INSTALL_DIR)/sfslite
 
 dht_configure_args += --with-gmp=$(INSTALL_DIR)/gmp
 
+dht_configure_args += --enable-shared
+
