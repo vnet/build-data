@@ -5,7 +5,7 @@ final_prefix = /tmp/ompi
 ompi_platform_dir = $(call find_source_fn,$(PACKAGE_SOURCE))/contrib/platform
 ompi_platform_file= $(ompi_platform_dir)/cisco/hlfr/ebuild
 
-ompi_configure_depend = clib-install svm-install
+ompi_configure_depend = clib-install
 
 # target dependent configure args
 # PLATFORM=qasmp
@@ -22,8 +22,6 @@ ompi_configure_args_ =
 # combine target specific args with general configure args
 ompi_configure_args = $(ompi_configure_args_$(TARGET)) \
   --with-platform=$(ompi_platform_file) \
-  --with-crsvm=$(call package_install_dir_fn,svm) \
-  --with-crsvm-libdir=$(call installed_lib_fn,svm) \
   --with-clib=$(call package_install_dir_fn,clib) \
   --with-clib-libdir=$(call installed_lib_fn,clib)
 
