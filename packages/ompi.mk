@@ -1,6 +1,6 @@
 # final_prefix is the final location where the package will
 # be installed (by ompi-pacman-install) on the real hardware.
-final_prefix = /tmp/ompi
+ompi_final_prefix = /tmp/ompi
 
 ompi_platform_dir = $(call find_source_fn,$(PACKAGE_SOURCE))/contrib/platform
 
@@ -25,7 +25,7 @@ ompi_platform_file_ = $(ompi_platform_dir)/cisco/ebuild/native
 ompi_configure_args = $(ompi_configure_args_$(TARGET)) \
   --with-platform=$(ompi_platform_file_$(target))
 
-ompi_configure_prefix = --prefix=$(final_prefix)
+ompi_configure_prefix = --prefix=$(ompi_final_prefix)
 
 ompi_configure =				\
   s=$(call find_source_fn,$(PACKAGE_SOURCE)) ;	\
@@ -44,8 +44,8 @@ ompi_install_args = DESTDIR='$(PACKAGE_INSTALL_DIR)'
 
 ompi_build = \
   if [ -z "$(TARGET)" ] ; then                                    \
-    if [ -L $(final_prefix) ] ; then                              \
-      rm $(final_prefix) ;                                        \
+    if [ -L $(ompi_final_prefix) ] ; then                              \
+      rm $(ompi_final_prefix) ;                                        \
     fi ;                                                          \
   fi ;                                                            \
   $(MAKE)                                                         \
@@ -53,7 +53,7 @@ ompi_build = \
     $($(PACKAGE)_make_args)                                       \
     $(MAKE_PARALLEL_FLAGS) ;                                      \
   if [ -z "$(TARGET)" ] ; then                                    \
-    ln -s $(PACKAGE_INSTALL_DIR)$(final_prefix) $(final_prefix) ; \
+    ln -s $(PACKAGE_INSTALL_DIR)$(ompi_final_prefix) $(ompi_final_prefix) ; \
   fi
 
 
@@ -63,6 +63,6 @@ ompi_build = \
 # This is simpler than trying to "fix" the paths inside the .la files,
 # since we won't be using the .la files on the CRS anyway.
 ompi_post_install = \
-  rm $(PACKAGE_INSTALL_DIR)/$(final_prefix)/*/*.la ; \
-  cp -p $(ompi_platform_file_$(TARGET)).conf $(PACKAGE_INSTALL_DIR)/$(final_prefix)/etc/openmpi-mca-params.conf
+  rm $(PACKAGE_INSTALL_DIR)/$(ompi_final_prefix)/*/*.la ; \
+  cp -p $(ompi_platform_file_$(TARGET)).conf $(PACKAGE_INSTALL_DIR)/$(ompi_final_prefix)/etc/openmpi-mca-params.conf
 
