@@ -64,5 +64,14 @@ ompi_build = \
 # since we won't be using the .la files on the CRS anyway.
 ompi_post_install = \
   rm $(PACKAGE_INSTALL_DIR)/$(ompi_final_prefix)/*/*.la ; \
+  if [ -f $(PACKAGE_INSTALL_DIR)/$(ompi_final_prefix)/lib/libmpi.so ] ; then \
+    rm $(PACKAGE_INSTALL_DIR)/$(ompi_final_prefix)/lib/libmpi* ; \
+  fi ; \
+  if [ -f $(PACKAGE_INSTALL_DIR)/$(ompi_final_prefix)/lib/libtrace.so ] ; then \
+    rm $(PACKAGE_INSTALL_DIR)/$(ompi_final_prefix)/lib/libtrace* ; \
+  fi ; \
+  if [ -d $(PACKAGE_INSTALL_DIR)/$(ompi_final_prefix)/lib/openmpi ] ; then \
+    rm -r $(PACKAGE_INSTALL_DIR)/$(ompi_final_prefix)/lib/openmpi ; \
+  fi ; \
   cp -p $(ompi_platform_file_$(TARGET)).conf $(PACKAGE_INSTALL_DIR)/$(ompi_final_prefix)/etc/openmpi-mca-params.conf
 
