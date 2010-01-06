@@ -27,6 +27,10 @@ ompi_configure_args = $(ompi_configure_args_$(TARGET)) \
 
 ompi_configure_prefix = --prefix=$(ompi_final_prefix)
 
+# Have to 'touch ompi/aclocal.m4' because of git's bizarre
+# timestamp habits - if we don't, then OMPI's build system
+# is triggered to re-run autogen etc, which causes the
+# build to crash
 ompi_configure =				\
   s=$(call find_source_fn,$(PACKAGE_SOURCE)) ;	\
   cd $(PACKAGE_BUILD_DIR) ;			\
@@ -40,10 +44,13 @@ ompi_install_args = DESTDIR='$(PACKAGE_INSTALL_DIR)'
 
 ompi_build = \
   if [ -z "$(TARGET)" ] ; then                                    \
-    if [ -L $(ompi_final_prefix) ] ; then                              \
-      rm $(ompi_final_prefix) ;                                        \
+    if [ -L $(ompi_final_prefix) ] ; then                         \
+      rm $(ompi_final_prefix) ;                                   \
     fi ;                                                          \
   fi ;                                                            \
+  pushd $(PACKAGE_BUILD_DIR) ;                                    \
+  find . -exec /bin/touch {} \;  ;                                \
+  popd ;                                                          \
   $(MAKE)                                                         \
     -C $(PACKAGE_BUILD_DIR)                                       \
     $($(PACKAGE)_make_args)                                       \
