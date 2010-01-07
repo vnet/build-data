@@ -54,6 +54,11 @@ linuxrc_initrd_image_install =							\
   cp $${linuxrc_install_dir}/usr/libexec/linuxrc $${linuxrc_tmp} ;		\
   chmod +x $${linuxrc_tmp} ;							\
   $(TARGET)-strip $${linuxrc_tmp} ;						\
+  : sign the linuxrc executable ;						\
+  if [ "$(sign_executables)" = 'yes'					\
+          -a -n "$($(PLATFORM)_public_key)" ] ; then				\
+    sign $($(PLATFORM)_public_key) $${linuxrc_tmp} ;				\
+  fi ;										\
   : use pre-processor to generate conf file ;					\
   conf_tmp="`mktemp $${linuxrc_install_dir}/linuxrc-conf-XXXXX`" ;		\
   env LINUXRC_INITRD_TYPE=$(linuxrc_initrd_type)				\
@@ -83,7 +88,7 @@ linuxrc_initrd_image_install =							\
 	$${tmp_dir},$${initrd_img}) ;						\
   }" ;										\
   : cleanup tmp directory ;							\
-  rm -rf $${tmp_dir}
+  echo rm -rf $${tmp_dir}
 
 $(linuxrc_initrd_image): linuxrc-install
 	$(linuxrc_initrd_image_install)
