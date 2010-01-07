@@ -23,7 +23,7 @@ ompi_platform_file_ = $(ompi_platform_dir)/cisco/ebuild/native
 
 # combine target specific args with general configure args
 ompi_configure_args = $(ompi_configure_args_$(TARGET)) \
-  --with-platform=$(ompi_platform_file_$(target))
+  --with-platform=$(ompi_platform_file_$(TARGET))
 
 ompi_configure_prefix = --prefix=$(ompi_final_prefix)
 
