@@ -27,12 +27,12 @@ ompi_configure_args = $(ompi_configure_args_$(TARGET)) \
 
 ompi_configure_prefix = --prefix=$(ompi_final_prefix)
 
+# Have to 'touch ompi/aclocal.m4' because of git's bizarre
+# timestamp habits - if we don't, then OMPI's build system
+# is triggered to re-run autogen etc, which causes the
+# build to crash
 ompi_configure =				\
   s=$(call find_source_fn,$(PACKAGE_SOURCE)) ;	\
-  if [ ! -f $$s/configure ] ; then		\
-    cd $$s ;					\
-    ./autogen.sh -no-ompi ;			\
-  fi ;						\
   cd $(PACKAGE_BUILD_DIR) ;			\
   env $(CONFIGURE_ENV)				\
     $$s/configure				\
@@ -44,10 +44,13 @@ ompi_install_args = DESTDIR='$(PACKAGE_INSTALL_DIR)'
 
 ompi_build = \
   if [ -z "$(TARGET)" ] ; then                                    \
-    if [ -L $(ompi_final_prefix) ] ; then                              \
-      rm $(ompi_final_prefix) ;                                        \
+    if [ -L $(ompi_final_prefix) ] ; then                         \
+      rm $(ompi_final_prefix) ;                                   \
     fi ;                                                          \
   fi ;                                                            \
+  pushd $(PACKAGE_BUILD_DIR) ;                                    \
+  find . -exec /bin/touch {} \;  ;                                \
+  popd ;                                                          \
   $(MAKE)                                                         \
     -C $(PACKAGE_BUILD_DIR)                                       \
     $($(PACKAGE)_make_args)                                       \
@@ -73,5 +76,7 @@ ompi_post_install = \
   if [ -d $(PACKAGE_INSTALL_DIR)/$(ompi_final_prefix)/lib/openmpi ] ; then \
     rm -r $(PACKAGE_INSTALL_DIR)/$(ompi_final_prefix)/lib/openmpi ; \
   fi ; \
-  cp -p $(ompi_platform_file_$(TARGET)).conf $(PACKAGE_INSTALL_DIR)/$(ompi_final_prefix)/etc/openmpi-mca-params.conf
+  cp -p $(ompi_platform_file_$(TARGET)).conf $(PACKAGE_INSTALL_DIR)/$(ompi_final_prefix)/etc/openmpi-mca-params.conf ; \
+  export OPAL_DESTDIR=$(PACKAGE_INSTALL_DIR) ;                  \
+  echo "NOTE: BE SURE TO INCLUDE OPAL_DESTDIR="$(PACKAGE_INSTALL_DIR) "IN YOUR ENVIRONMENT"
 
