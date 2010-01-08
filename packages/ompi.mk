@@ -72,7 +72,8 @@ ompi_post_install = \
   if [ -d $(PACKAGE_INSTALL_DIR)/$(ompi_final_prefix)/lib/openmpi ] ; then \
     rm -r $(PACKAGE_INSTALL_DIR)/$(ompi_final_prefix)/lib/openmpi ; \
   fi ; \
-  cp -p $(ompi_platform_file_$(TARGET)).conf $(PACKAGE_INSTALL_DIR)/$(ompi_final_prefix)/etc/openmpi-mca-params.conf ; \
-  export OPAL_DESTDIR=$(PACKAGE_INSTALL_DIR) ;                  \
-  echo "NOTE: BE SURE TO INCLUDE OPAL_DESTDIR="$(PACKAGE_INSTALL_DIR) "IN YOUR ENVIRONMENT"
+  cp -p $(ompi_platform_file_$(TARGET)).conf $(PACKAGE_INSTALL_DIR)/$(ompi_final_prefix)/etc/openmpi-mca-params.conf
+
+#  export OPAL_DESTDIR=$(PACKAGE_INSTALL_DIR) ;                  \
+#  echo "NOTE: BE SURE TO INCLUDE OPAL_DESTDIR="$(PACKAGE_INSTALL_DIR) "IN YOUR ENVIRONMENT"
 
