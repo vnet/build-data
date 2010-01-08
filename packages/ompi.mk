@@ -43,11 +43,9 @@ ompi_configure =				\
 ompi_install_args = DESTDIR='$(PACKAGE_INSTALL_DIR)'
 
 ompi_build = \
-  if [ -z "$(TARGET)" ] ; then                                    \
-    if [ -L $(ompi_final_prefix) ] ; then                         \
-      rm $(ompi_final_prefix) ;                                   \
-    fi ;                                                          \
-  fi ;                                                            \
+  if [ -L $(ompi_final_prefix) ] ; then                         \
+    rm $(ompi_final_prefix) ;                                   \
+  fi ;                                                          \
   pushd $(PACKAGE_BUILD_DIR) ;                                    \
   find . -exec /bin/touch {} \;  ;                                \
   popd ;                                                          \
@@ -55,9 +53,7 @@ ompi_build = \
     -C $(PACKAGE_BUILD_DIR)                                       \
     $($(PACKAGE)_make_args)                                       \
     $(MAKE_PARALLEL_FLAGS) ;                                      \
-  if [ -z "$(TARGET)" ] ; then                                    \
-    ln -s $(PACKAGE_INSTALL_DIR)$(ompi_final_prefix) $(ompi_final_prefix) ; \
-  fi
+  ln -s $(PACKAGE_INSTALL_DIR)$(ompi_final_prefix) $(ompi_final_prefix)
 
 
 # Remove any installed libtool .la files, so that dependent packages
