@@ -57,7 +57,7 @@ linuxrc_initrd_image_install =							\
   : sign the linuxrc executable ;						\
   if [ "$(sign_executables)" = 'yes'					\
           -a -n "$($(PLATFORM)_public_key)" ] ; then				\
-    sign $($(PLATFORM)_public_key) $${linuxrc_tmp} ;				\
+    sign $($(PLATFORM)_public_key) $($(PLATFORM)_private_key_passphrase) $${linuxrc_tmp} ;				\
   fi ;										\
   : use pre-processor to generate conf file ;					\
   conf_tmp="`mktemp $${linuxrc_install_dir}/linuxrc-conf-XXXXX`" ;		\
