@@ -27,3 +27,5 @@ sfslite_configure_args += --with-mode=lite
 
 sfslite_configure_args += --with-gmp=$(INSTALL_DIR)/gmp
 
+#sfslite_configure_args += --enable-shared
+
