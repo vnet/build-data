@@ -43,13 +43,17 @@ ompi_configure =				\
 ompi_install_args = DESTDIR='$(PACKAGE_INSTALL_DIR)'
 
 ompi_build = \
+  if [ -L $(ompi_final_prefix) ] ; then                           \
+     rm $(ompi_final_prefix) ;                                    \
+  fi ;                                                            \
   pushd $(PACKAGE_BUILD_DIR) ;                                    \
   find . -exec /bin/touch {} \;  ;                                \
   popd ;                                                          \
   $(MAKE)                                                         \
     -C $(PACKAGE_BUILD_DIR)                                       \
     $($(PACKAGE)_make_args)                                       \
-    $(MAKE_PARALLEL_FLAGS)
+    $(MAKE_PARALLEL_FLAGS) ;                                      \
+  ln -s $(PACKAGE_INSTALL_DIR)$(ompi_final_prefix) $(ompi_final_prefix)
 
 
 # Remove any installed libtool .la files, so that dependent packages
@@ -58,7 +62,6 @@ ompi_build = \
 # This is simpler than trying to "fix" the paths inside the .la files,
 # since we won't be using the .la files on the CRS anyway.
 ompi_post_install = \
-  rm $(PACKAGE_INSTALL_DIR)$(ompi_final_prefix)/*/*.la ; \
   if [ -f $(PACKAGE_INSTALL_DIR)$(ompi_final_prefix)/lib/libmpi.so ] ; then \
     rm $(PACKAGE_INSTALL_DIR)$(ompi_final_prefix)/lib/libmpi* ; \
   fi ; \
@@ -69,12 +72,6 @@ ompi_post_install = \
     rm -r $(PACKAGE_INSTALL_DIR)$(ompi_final_prefix)/lib/openmpi ; \
   fi ; \
   cp -p $(ompi_platform_file_$(TARGET)).conf $(PACKAGE_INSTALL_DIR)/$(ompi_final_prefix)/etc/openmpi-mca-params.conf ; \
-  echo "export PATH=$(PACKAGE_INSTALL_DIR)$(ompi_final_prefix)/bin:$(PATH)" > $(PACKAGE_INSTALL_DIR)/setup ; \
-  echo "export LD_LIBRARY_PATH=$(PACKAGE_INSTALL_DIR)$(ompi_final_prefix)/lib:$(LD_LIBRARY_PATH)" >> $(PACKAGE_INSTALL_DIR)/setup ; \
-  echo "export OPAL_DESTDIR=$(PACKAGE_INSTALL_DIR)" >> $(PACKAGE_INSTALL_DIR)/setup ; \
-  echo "BE SURE TO EXECUTE \"source $(PACKAGE_INSTALL_DIR)/setup\""
-
-
-#  export OPAL_DESTDIR=$(PACKAGE_INSTALL_DIR) ;                  \
-#  echo "NOTE: BE SURE TO INCLUDE OPAL_DESTDIR="$(PACKAGE_INSTALL_DIR) "IN YOUR ENVIRONMENT"
+  export OPAL_DESTDIR=$(PACKAGE_INSTALL_DIR) ;                  \
+  echo "NOTE: BE SURE TO INCLUDE OPAL_DESTDIR="$(PACKAGE_INSTALL_DIR) "IN YOUR ENVIRONMENT"
 
