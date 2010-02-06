@@ -1,6 +1,5 @@
 # final_prefix is the final location where the package will
 # be installed (by ompi-pacman-install) on the real hardware.
-ompi_final_prefix = /tmp/ompi
 
 ompi_platform_dir = $(call find_source_fn,$(PACKAGE_SOURCE))/contrib/platform
 
@@ -11,21 +10,24 @@ ompi_configure_depend =
 ompi_configure_args_ppc-q-linux = \
   --build=i386-unknown-linux-gnu
 ompi_platform_file_ppc-q-linux = $(ompi_platform_dir)/cisco/ebuild/hlfr
+ompi_final_prefix_ppc-q-linux = /tmp/ompi
 
 # PLATFORM=qsp
 ompi_configure_args_ppc-qsp-linux = \
   --build=i386-unknown-linux-gnu
 ompi_platform_file_ppc-qsp-linux = $(ompi_platform_dir)/cisco/ebuild/hlfr
+ompi_final_prefix_ppc-qsp-linux = /tmp/ompi
 
 # PLATFORM=native, NOTE: $(TARGET) is the empty string
 ompi_configure_args_ = 
 ompi_platform_file_ = $(ompi_platform_dir)/cisco/ebuild/native
+ompi_final_prefix_ = $(HOME)/ompi
 
 # combine target specific args with general configure args
 ompi_configure_args = $(ompi_configure_args_$(TARGET)) \
   --with-platform=$(ompi_platform_file_$(TARGET))
 
-ompi_configure_prefix = --prefix=$(ompi_final_prefix)
+ompi_configure_prefix = --prefix=$(ompi_final_prefix_$(TARGET))
 
 # Have to 'touch ompi/aclocal.m4' because of git's bizarre
 # timestamp habits - if we don't, then OMPI's build system
@@ -43,8 +45,8 @@ ompi_configure =				\
 ompi_install_args = DESTDIR='$(PACKAGE_INSTALL_DIR)'
 
 ompi_build = \
-  if [ -L $(ompi_final_prefix) ] ; then                           \
-     rm $(ompi_final_prefix) ;                                    \
+  if [ -L $(ompi_final_prefix_$(TARGET)) ] ; then                           \
+     rm $(ompi_final_prefix_$(TARGET)) ;                                    \
   fi ;                                                            \
   pushd $(PACKAGE_BUILD_DIR) ;                                    \
   find . -exec /bin/touch {} \;  ;                                \
@@ -52,8 +54,7 @@ ompi_build = \
   $(MAKE)                                                         \
     -C $(PACKAGE_BUILD_DIR)                                       \
     $($(PACKAGE)_make_args)                                       \
-    $(MAKE_PARALLEL_FLAGS) ;                                      \
-  ln -s $(PACKAGE_INSTALL_DIR)$(ompi_final_prefix) $(ompi_final_prefix)
+    $(MAKE_PARALLEL_FLAGS)
 
 
 # Remove any installed libtool .la files, so that dependent packages
@@ -62,15 +63,16 @@ ompi_build = \
 # This is simpler than trying to "fix" the paths inside the .la files,
 # since we won't be using the .la files on the CRS anyway.
 ompi_post_install = \
-  if [ -f $(PACKAGE_INSTALL_DIR)$(ompi_final_prefix)/lib/libmpi.so ] ; then \
-    rm $(PACKAGE_INSTALL_DIR)$(ompi_final_prefix)/lib/libmpi* ; \
+  if [ -f $(PACKAGE_INSTALL_DIR)$(ompi_final_prefix_$(TARGET))/lib/libmpi.so ] ; then \
+    rm $(PACKAGE_INSTALL_DIR)$(ompi_final_prefix_$(TARGET))/lib/libmpi* ; \
   fi ; \
-  if [ -f $(PACKAGE_INSTALL_DIR)$(ompi_final_prefix)/lib/libtrace.so ] ; then \
-    rm $(PACKAGE_INSTALL_DIR)$(ompi_final_prefix)/lib/libtrace* ; \
+  if [ -f $(PACKAGE_INSTALL_DIR)$(ompi_final_prefix_$(TARGET))/lib/libtrace.so ] ; then \
+    rm $(PACKAGE_INSTALL_DIR)$(ompi_final_prefix_$(TARGET))/lib/libtrace* ; \
   fi ; \
-  if [ -d $(PACKAGE_INSTALL_DIR)$(ompi_final_prefix)/lib/openmpi ] ; then \
-    rm -r $(PACKAGE_INSTALL_DIR)$(ompi_final_prefix)/lib/openmpi ; \
+  if [ -d $(PACKAGE_INSTALL_DIR)$(ompi_final_prefix_$(TARGET))/lib/openmpi ] ; then \
+    rm -r $(PACKAGE_INSTALL_DIR)$(ompi_final_prefix_$(TARGET))/lib/openmpi ; \
   fi ; \
-  cp -p $(ompi_platform_file_$(TARGET)).conf $(PACKAGE_INSTALL_DIR)/$(ompi_final_prefix)/etc/openmpi-mca-params.conf ; \
-  echo "BE SURE TO ADD /tmp/ompi/bin TO YOUR PATH BE SURE TO ADD /tmp/ompi/lib to your LD_LIBRARY_PATH"
+  cp -p $(ompi_platform_file_$(TARGET)).conf $(PACKAGE_INSTALL_DIR)/$(ompi_final_prefix_$(TARGET))/etc/openmpi-mca-params.conf ; \
+  ln -s $(PACKAGE_INSTALL_DIR)$(ompi_final_prefix_$(TARGET)) $(ompi_final_prefix_$(TARGET)) ; \
+  echo "BE SURE TO ADD $(ompi_final_prefix_$(TARGET))/bin TO YOUR PATH BE SURE TO ADD $(ompi_final_prefix_$(TARGET))/lib to your LD_LIBRARY_PATH"
 

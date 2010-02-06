@@ -8,13 +8,13 @@
 
 
 #### jadfix for elog points ####
-####dht_CPPFLAGS = $(call installed_includes_fn, elog)
+dht_CPPFLAGS = $(call installed_includes_fn, elog)
 
-####dht_LDFLAGS = $(call installed_libs_fn, elog)
+dht_LDFLAGS = $(call installed_libs_fn, elog)
 
-####dht_configure_depend = db-install sfslite-install gmp-install elog-install
+dht_configure_depend = db-install sfslite-install gmp-install elog-install
 
-dht_configure_depend = db-install sfslite-install gmp-install
+####dht_configure_depend = db-install sfslite-install gmp-install
 
 dht_configure_args += --with-db=$(INSTALL_DIR)/db
 
