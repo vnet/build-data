@@ -1,10 +1,11 @@
 # final_prefix is the final location where the package will
 # be installed (by ompi-pacman-install) on the real hardware.
-ompi_final_prefix = /tmp/ompi
 
 ompi_platform_dir = $(call find_source_fn,$(PACKAGE_SOURCE))/contrib/platform
 
 ompi_configure_depend = 
+
+ompi_prefix=$(if $(TARGET),/tmp/ompi,$(PACKAGE_INSTALL_DIR))
 
 # target dependent configure args
 # PLATFORM=qasmp
@@ -25,7 +26,7 @@ ompi_platform_file_ = $(ompi_platform_dir)/cisco/ebuild/native
 ompi_configure_args = $(ompi_configure_args_$(TARGET)) \
   --with-platform=$(ompi_platform_file_$(TARGET))
 
-ompi_configure_prefix = --prefix=$(ompi_final_prefix)
+ompi_configure_prefix = --prefix=$(ompi_prefix)
 
 # Have to 'touch ompi/aclocal.m4' because of git's bizarre
 # timestamp habits - if we don't, then OMPI's build system
@@ -40,20 +41,18 @@ ompi_configure =				\
       $(ompi_configure_prefix)			\
       $(ompi_configure_args)
 
-ompi_install_args = DESTDIR='$(PACKAGE_INSTALL_DIR)'
+# DESTDIR is / only for native builds
+ompi_destdir = $(if $(TARGET),$(PACKAGE_INSTALL_DIR),/)
+ompi_install_args = DESTDIR=$(ompi_destdir)
 
 ompi_build = \
-  if [ -L $(ompi_final_prefix) ] ; then                           \
-     rm $(ompi_final_prefix) ;                                    \
-  fi ;                                                            \
   pushd $(PACKAGE_BUILD_DIR) ;                                    \
   find . -exec /bin/touch {} \;  ;                                \
   popd ;                                                          \
   $(MAKE)                                                         \
     -C $(PACKAGE_BUILD_DIR)                                       \
     $($(PACKAGE)_make_args)                                       \
-    $(MAKE_PARALLEL_FLAGS) ;                                      \
-  ln -s $(PACKAGE_INSTALL_DIR)$(ompi_final_prefix) $(ompi_final_prefix)
+    $(MAKE_PARALLEL_FLAGS)
 
 
 # Remove any installed libtool .la files, so that dependent packages
@@ -61,16 +60,10 @@ ompi_build = \
 # that do not reflect the DESTDIR used in the install of ompi.
 # This is simpler than trying to "fix" the paths inside the .la files,
 # since we won't be using the .la files on the CRS anyway.
+ompi_instdir = $(call package_install_dir_fn,ompi)$(if $(TARGET),/tmp/ompi)
 ompi_post_install = \
-  if [ -f $(PACKAGE_INSTALL_DIR)$(ompi_final_prefix)/lib/libmpi.so ] ; then \
-    rm $(PACKAGE_INSTALL_DIR)$(ompi_final_prefix)/lib/libmpi* ; \
-  fi ; \
-  if [ -f $(PACKAGE_INSTALL_DIR)$(ompi_final_prefix)/lib/libtrace.so ] ; then \
-    rm $(PACKAGE_INSTALL_DIR)$(ompi_final_prefix)/lib/libtrace* ; \
-  fi ; \
-  if [ -d $(PACKAGE_INSTALL_DIR)$(ompi_final_prefix)/lib/openmpi ] ; then \
-    rm -r $(PACKAGE_INSTALL_DIR)$(ompi_final_prefix)/lib/openmpi ; \
-  fi ; \
-  cp -p $(ompi_platform_file_$(TARGET)).conf $(PACKAGE_INSTALL_DIR)/$(ompi_final_prefix)/etc/openmpi-mca-params.conf ; \
-  echo "BE SURE TO ADD /tmp/ompi/bin TO YOUR PATH BE SURE TO ADD /tmp/ompi/lib to your LD_LIBRARY_PATH"
-
+  (cd $(ompi_instdir)/lib && find . -name '*.la' -print0 | xargs -0 rm -f) ; \
+  cp -p $(ompi_platform_file_$(TARGET)).conf \
+	$(ompi_instdir)/etc/openmpi-mca-params.conf ; \
+  echo "BE SURE TO ADD $(ompi_prefix)/bin to PATH"; \
+  echo "  AND $(ompi_prefix)/lib to LD_LIBRARY_PATH"
