@@ -38,4 +38,4 @@ util-linux_configure_args += --without-pam
 
 util-linux_image_include =					\
   echo bin/dmesg bin/login bin/more bin/mount bin/umount ;	\
-  echo sbin/agetty sbin/hwclock
+  echo sbin/agetty sbin/hwclock sbin/swapon sbin/swapoff

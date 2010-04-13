@@ -1,1 +1,3 @@
 /dev/hda1               /mnt/hd                 vfat    defaults 0 0
+rootfs			/			rootfs	defaults 0 0
+proc			/proc			proc	defaults 0 0
