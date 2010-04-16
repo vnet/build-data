@@ -280,6 +280,13 @@ then
 			fi
 			SCRIPTS="$SCRIPTS $i"
 		done
+
+		if [[ $SCRIPTS == *single ]]
+		then
+			# avoid error message since we will EXIT in single
+			trap - EXIT # Disable emergency handler
+		fi
+
 		startup $ACTION $SCRIPTS
 
 		# Use 50% of the progress bar for rcS and the rest for the
