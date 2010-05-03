@@ -26,8 +26,10 @@ util-linux_configure_args += --enable-login-utils
 util-linux_configure_args += --disable-use-tty-group
 
 util-linux_CPPFLAGS = $(call installed_includes_fn, ncurses)
+util-linux_CPPFLAGS += $(call installed_includes_fn, e2fsprogs)
 
 util-linux_LDFLAGS = $(call installed_libs_fn, ncurses)
+util-linux_LDFLAGS += $(call installed_libs_fn, e2fsprogs)
 
 # pam disabled for now
 util-linux_configure_args += --without-pam
@@ -36,4 +38,4 @@ util-linux_configure_args += --without-pam
 
 util-linux_image_include =					\
   echo bin/dmesg bin/login bin/more bin/mount bin/umount ;	\
-  echo sbin/agetty sbin/hwclock
+  echo sbin/agetty sbin/hwclock sbin/swapon sbin/swapoff

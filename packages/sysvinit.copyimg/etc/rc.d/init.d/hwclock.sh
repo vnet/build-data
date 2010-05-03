@@ -36,6 +36,13 @@ hwclocksh()
     . /etc/default/rcS
 
     . /lib/lsb/init-functions
+
+    PLATFORM=`cat /proc/cpuinfo | sed -n 's/platform.*: //p'`
+    if [[ $PLATFORM != QASMP ]]
+    then
+    return 0
+    fi
+
     verbose_log_action_msg() { [ "$VERBOSE" = no ] || log_action_msg "$@"; }
 
     [ "$GMT" = "-u" ] && UTC="yes"
@@ -98,6 +105,7 @@ hwclocksh()
 		:
 	    fi
 
+	    HWCLOCKACCESS=no #let kernel set the clock
 	    if [ "$HWCLOCKACCESS" != no ]; then
 		log_action_msg "Setting the system clock"
 
@@ -111,7 +119,8 @@ hwclocksh()
 		    log_warning_msg "Unable to set System Clock to: `date $UTC`"
 		fi
 	    else
-		verbose_log_action_msg "Not setting System Clock"
+		#	verbose_log_action_msg "Not setting System Clock"
+		HWCLOCKACCESS=yes #so we can retrieve the system clock later
 	    fi
 	    ;;
 	stop|restart|reload|force-reload)
