@@ -12,7 +12,7 @@ dht_CPPFLAGS = $(call installed_includes_fn, elog)
 
 dht_LDFLAGS = $(call installed_libs_fn, elog)
 
-dht_configure_depend = db-install sfslite-install gmp-install elog-install
+dht_configure_depend = elog-install db-install sfslite-install gmp-install
 
 ####dht_configure_depend = db-install sfslite-install gmp-install
 

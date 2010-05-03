@@ -19,7 +19,12 @@
 # Originally: had to do this: ./configure --with-sfsmisc --with-gmp=$deploy_dir/gmp-4.3.1_bin --with-mode=lite --prefix=$deploy_dir/sfslite-0.8.17_bin
 # Now: If not overriden below, configure was modified s.t. with-sfsmisc is automatically added, with-mode is set to lite and with-gmp defaults to ppc7450 ebuild dir (currently build-root/install-ppc7450/gmp); but again, they are overridden below
 
-sfslite_configure_depend = gmp-install
+#### jadfix for elog points ####
+sfslite_CPPFLAGS = $(call installed_includes_fn, elog)
+
+sfslite_LDFLAGS = $(call installed_libs_fn, elog)
+
+sfslite_configure_depend = gmp-install elog-install
 
 sfslite_configure_args += --with-sfsmisc
 
