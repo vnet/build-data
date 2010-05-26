@@ -34,3 +34,6 @@ sfslite_configure_args += --with-gmp=$(INSTALL_DIR)/gmp
 
 sfslite_configure_args += --enable-shared
 
+#sfslite_configure_args += --with-x=/dev/null
+
+sfslite_configure_args += --with-x=no
