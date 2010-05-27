@@ -22,5 +22,7 @@ dht_configure_args += --enable-shared
 
 #dht_configure_args += "sys_lib_dlsearch_path_spec='/lib/x86_64-linux-gnu /usr/lib/x86_64-linux-gnu '"
 
-dht_configure_args += "sys_lib_dlsearch_path_spec=' '"
+#dht_configure_args += "sys_lib_dlsearch_path_spec=' '"
+
+dht_configure_args += --with-pthreads=$(INSTALL_DIR)/../tools/$(TARGET)
 
