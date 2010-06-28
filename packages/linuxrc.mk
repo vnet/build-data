@@ -23,7 +23,7 @@ linuxrc_make_initrd_fn_nfs = \
   mksquashfs $(1) $(2) -all-root -no-duplicates
 
 # linuxrc_initrd_size = initrd size in kilobytes (multiple of 1024 bytes)
-linuxrc_initrd_size = 9216
+linuxrc_initrd_size = 10240
 linuxrc_make_initrd_fn_ext2 = \
   e2fsimage -d $(1) -f $(2) -s $(linuxrc_initrd_size)
 
