@@ -20,9 +20,17 @@ dht_configure_args += --with-gmp=$(INSTALL_DIR)/gmp
 
 dht_configure_args += --enable-shared
 
-#dht_configure_args += "sys_lib_dlsearch_path_spec='/lib/x86_64-linux-gnu /usr/lib/x86_64-linux-gnu '"
+##dht_configure_args += "sys_lib_dlsearch_path_spec='/lib/x86_64-linux-gnu /usr/lib/x86_64-linux-gnu '"
 
-#dht_configure_args += "sys_lib_dlsearch_path_spec=' '"
+##dht_configure_args += "sys_lib_dlsearch_path_spec=' '"
 
 dht_configure_args += --with-pthreads=$(INSTALL_DIR)/../tools/$(TARGET)
+
+##dht_configure_args += --with-pthreads=/
+
+#dht_configure_args += "CXXDEBUG=-g -O0"
+#dht_configure_args += "DEBUG=-g -O0"
+
+dht_configure_args += "CFLAGS=-g -O3"
+dht_configure_args += "CXXFLAGS=-g -O3"
 

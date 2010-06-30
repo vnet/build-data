@@ -34,8 +34,15 @@ sfslite_configure_args += --with-gmp=$(INSTALL_DIR)/gmp
 
 sfslite_configure_args += --enable-shared
 
+##sfslite_configure_args += --with-x=/dev/null
+
 sfslite_configure_args += --with-x=no
 
 sfslite_configure_args += --with-pthreads=$(INSTALL_DIR)/../tools/$(TARGET)
 
+##sfslite_configure_args += "CXXDEBUG=-g -O0"
+##sfslite_configure_args += "DEBUG=-g -O0"
+
+sfslite_configure_args += "CFLAGS=-g -O3"
+sfslite_configure_args += "CXXFLAGS=-g -O3"
 
