@@ -43,6 +43,7 @@ openssl_make_args += LDFLAGS=$(call installed_libs_fn,zlib)
 openssl_make_parallel_fails = yes
 
 openssl_image_include = echo bin $(arch_lib_dir) ssl
+openssl_image_exclude = $(arch_lib_dir)/lib*.a
 
 openssl_post_install =							    \
   if [ "$(arch_lib_dir)" != "lib" ] ; then				    \
