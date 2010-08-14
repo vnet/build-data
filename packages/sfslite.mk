@@ -20,6 +20,7 @@
 # Now: If not overriden below, configure was modified s.t. with-sfsmisc is automatically added, with-mode is set to lite and with-gmp defaults to ppc7450 ebuild dir (currently build-root/install-ppc7450/gmp); but again, they are overridden below
 
 #### jadfix for elog points ####
+
 sfslite_CPPFLAGS = $(call installed_includes_fn, elog)
 
 sfslite_LDFLAGS = $(call installed_libs_fn, elog)
@@ -34,8 +35,6 @@ sfslite_configure_args += --with-gmp=$(INSTALL_DIR)/gmp
 
 sfslite_configure_args += --enable-shared
 
-##sfslite_configure_args += --with-x=/dev/null
-
 sfslite_configure_args += --with-x=no
 
 sfslite_configure_args += --with-pthreads=$(INSTALL_DIR)/../tools/$(TARGET)
@@ -43,6 +42,28 @@ sfslite_configure_args += --with-pthreads=$(INSTALL_DIR)/../tools/$(TARGET)
 ##sfslite_configure_args += "CXXDEBUG=-g -O0"
 ##sfslite_configure_args += "DEBUG=-g -O0"
 
-sfslite_configure_args += "CFLAGS=-g -O3"
-sfslite_configure_args += "CXXFLAGS=-g -O3"
+sfslite_configure_args += "CFLAGS=-g -O3 $(sfslite_CPPFLAGS)"
+sfslite_configure_args += "CXXFLAGS=-g -O3 $(sfslite_CPPFLAGS)"
+sfslite_configure_args += "LDFLAGS=$(sfslite_LDFLAGS)"
+
+host_particle=$(if $(ARCH:native=),--host=$(TARGET),)
+
+sfslite_configure = \
+   echo "if [ ! -s $(PACKAGE_BUILD_DIR)/acsfs.port.m4 ] ; then cp -r $(MU_BUILD_ROOT_DIR)/../sfslite $(PACKAGE_BUILD_DIR)/.. ; fi" ; \
+   if [ ! -s $(PACKAGE_BUILD_DIR)/acsfs.port.m4 ] ; then echo cp -r $(MU_BUILD_ROOT_DIR)/../sfslite $(PACKAGE_BUILD_DIR)/.. ; cp -r $(MU_BUILD_ROOT_DIR)/../sfslite $(PACKAGE_BUILD_DIR)/.. ; fi ; \
+   \
+   echo "cd $(PACKAGE_BUILD_DIR)" ; \
+   cd $(PACKAGE_BUILD_DIR) ; \
+   \
+   echo "autoreconf -fi" ; \
+   autoreconf -fi ; \
+   \
+   echo "./patch_configure5 configure" ; \
+   ./patch_configure5 configure ; \
+   \
+   echo "./configure --libdir=$(PACKAGE_INSTALL_DIR)/$(arch_lib_dir) --prefix=$(PACKAGE_INSTALL_DIR) $(host_particle) $(sfslite_configure_args)" ; \
+   ./configure --libdir=$(PACKAGE_INSTALL_DIR)/$(arch_lib_dir) --prefix=$(PACKAGE_INSTALL_DIR) $(host_particle) $(sfslite_configure_args) ; \
+   \
+   echo "cd $(MU_BUILD_ROOT_DIR)" ; \
+   cd $(MU_BUILD_ROOT_DIR)
 
