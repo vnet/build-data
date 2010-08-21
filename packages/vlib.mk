@@ -1,4 +1,5 @@
-vlib_configure_depend = clib-install svm-install
+vlib_depend = svm
+$(call pkgPhaseDependMacro,vlib)
 
 vlib_top_srcdir = $(call find_source_fn,vlib)
 

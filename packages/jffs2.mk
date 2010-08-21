@@ -1,4 +1,6 @@
-jffs2_configure_depend = zlib-install lzo-install
+jffs2_depend = zlib lzo
+$(call pkgPhaseDependMacro,jffs2)
 
-jffs2_CPPFLAGS += $(call installed_includes_fn, zlib lzo)
-jffs2_LDFLAGS += $(call installed_libs_fn, zlib lzo)
+jffs2_CPPFLAGS = -I$(zlib_top_srcdir) -I$(lzo_top_srcdir)/include
+
+jffs2_LDFLAGS = -L$(BUILD_DIR)/zlib/.libs -L$(BUILD_DIR)/lzo/src/.libs

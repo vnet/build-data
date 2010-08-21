@@ -19,25 +19,28 @@
 # Originally: had to do this: ./configure --with-sfsmisc --with-gmp=$deploy_dir/gmp-4.3.1_bin --with-mode=lite --prefix=$deploy_dir/sfslite-0.8.17_bin
 # Now: If not overriden below, configure was modified s.t. with-sfsmisc is automatically added, with-mode is set to lite and with-gmp defaults to ppc7450 ebuild dir (currently build-root/install-ppc7450/gmp); but again, they are overridden below
 
+#special case
+sfslite_configure_depend = gmp-install elog-install
+sfslite_build_depend = gmp-install elog-install
+sfslite_install_depend = gmp-install elog-install
+
 #### jadfix for elog points ####
 
-sfslite_CPPFLAGS = $(call installed_includes_fn, elog)
+sfslite_CPPFLAGS = -I$(elog_top_srcdir) -I$(BUILD_DIR)/gmp #-DHAVE_GMP_CXX_OPS
 
-sfslite_LDFLAGS = $(call installed_libs_fn, elog)
+sfslite_LDFLAGS = -L$(BUILD_DIR)/elog/.libs -lelib -lpthread -lrt
 
-sfslite_configure_depend = gmp-install elog-install
+sfslite_top_srcdir = $(call find_source_fn,sfslite)
 
 sfslite_configure_args += --with-sfsmisc
 
 sfslite_configure_args += --with-mode=lite
 
-sfslite_configure_args += --with-gmp=$(INSTALL_DIR)/gmp
+sfslite_configure_args += --with-gmp="$(BUILD_DIR)/gmp"
 
 sfslite_configure_args += --enable-shared
 
 sfslite_configure_args += --with-x=no
-
-#sfslite_make_parallel_fails = yes
 
 sfslite_configure_args += --with-pthreads=$(INSTALL_DIR)/../tools/$(TARGET)
 
@@ -49,23 +52,3 @@ sfslite_configure_args += "CXXFLAGS=-g -O3 $(sfslite_CPPFLAGS)"
 sfslite_configure_args += "LDFLAGS=$(sfslite_LDFLAGS)"
 
 host_particle=$(if $(ARCH:native=),--host=$(TARGET),)
-
-sfslite_configure = \
-   echo "if [ ! -s $(PACKAGE_BUILD_DIR)/acsfs.port.m4 ] ; then cp -r $(MU_BUILD_ROOT_DIR)/../sfslite $(PACKAGE_BUILD_DIR)/.. ; fi" ; \
-   if [ ! -s $(PACKAGE_BUILD_DIR)/acsfs.port.m4 ] ; then echo cp -r $(MU_BUILD_ROOT_DIR)/../sfslite $(PACKAGE_BUILD_DIR)/.. ; cp -r $(MU_BUILD_ROOT_DIR)/../sfslite $(PACKAGE_BUILD_DIR)/.. ; fi ; \
-   \
-   echo "cd $(PACKAGE_BUILD_DIR)" ; \
-   cd $(PACKAGE_BUILD_DIR) ; \
-   \
-   echo "autoreconf -fi" ; \
-   autoreconf -fi ; \
-   \
-   echo "./patch_configure5 configure" ; \
-   ./patch_configure5 configure ; \
-   \
-   echo "./configure --libdir=$(PACKAGE_INSTALL_DIR)/$(arch_lib_dir) --prefix=$(PACKAGE_INSTALL_DIR) $(host_particle) $(sfslite_configure_args)" ; \
-   ./configure --libdir=$(PACKAGE_INSTALL_DIR)/$(arch_lib_dir) --prefix=$(PACKAGE_INSTALL_DIR) $(host_particle) $(sfslite_configure_args) ; \
-   \
-   echo "cd $(MU_BUILD_ROOT_DIR)" ; \
-   cd $(MU_BUILD_ROOT_DIR)
-
