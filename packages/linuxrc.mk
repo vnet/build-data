@@ -11,7 +11,7 @@ linuxrc_platform_makedev_script = \
 linuxrc_install_depend += $(linuxrc_platform_makedev_script)
 
 linuxrc_makedev =						\
-  $(INSTALL_DIR)/linuxrc/sbin/mkinitrd_dev -d dev ;		\
+  $(call package_install_dir_fn,linuxrc)/sbin/mkinitrd_dev -d dev ;		\
   if [ ! -z "$(linuxrc_platform_makedev_script)" ]; then	\
     . $(linuxrc_platform_makedev_script) ;			\
   fi
@@ -30,7 +30,7 @@ linuxrc_make_initrd_fn_ext2 = \
 # default
 linuxrc_initrd_type = squashfs
 
-linuxrc_initrd_image = $(INSTALL_DIR)/linuxrc/initrd.$(linuxrc_initrd_type)
+linuxrc_initrd_image = $(call package_install_dir_fn,linuxrc)/initrd.$(linuxrc_initrd_type)
 
 linuxrc_platform_script = \
   $(call find_build_data_file_fn,packages/linuxrc-initrd-$(PLATFORM).sh)
@@ -41,7 +41,7 @@ if_eq_then_fn = $(if $(subst $(1),,$(2)),,$(3))
 
 linuxrc_initrd_image_install =							\
   @$(BUILD_ENV) ;								\
-  linuxrc_install_dir=$(INSTALL_DIR)/linuxrc ;					\
+  linuxrc_install_dir=$(call package_install_dir_fn,linuxrc) ;					\
   initrd_img="$${linuxrc_install_dir}/initrd.$(linuxrc_initrd_type)" ;		\
   rm -f $${initrd_img} ;							\
   : make platform-independant part of initrd ;					\

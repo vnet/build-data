@@ -37,6 +37,8 @@ sfslite_configure_args += --enable-shared
 
 sfslite_configure_args += --with-x=no
 
+#sfslite_make_parallel_fails = yes
+
 sfslite_configure_args += --with-pthreads=$(INSTALL_DIR)/../tools/$(TARGET)
 
 ##sfslite_configure_args += "CXXDEBUG=-g -O0"
