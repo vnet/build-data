@@ -35,8 +35,8 @@ db_configure = \
    echo "cd $(PARENT_ABS_PATH)/.db_copy/build_unix" ; \
    cd $(PARENT_ABS_PATH)/.db_copy/build_unix ; \
    \
-   echo "../dist/configure --enable-o_direct --libdir=$(PACKAGE_INSTALL_DIR)/$(arch_lib_dir) --prefix=$(PACKAGE_INSTALL_DIR) $(host_particle)" ; \
-   ../dist/configure $(db_configure_args)  --enable-o_direct --libdir=$(PACKAGE_INSTALL_DIR)/$(arch_lib_dir) --prefix=$(PACKAGE_INSTALL_DIR) $(host_particle) ; \
+   echo "../dist/configure --enable-o_direct --libdir=$(prefix)/$(arch_lib_dir) --prefix=$(prefix) $(host_particle)" ; \
+   ../dist/configure $(db_configure_args)  --enable-o_direct --libdir=$(prefix)/$(arch_lib_dir) --prefix=$(prefix) $(host_particle) ; \
    \
    echo "cd $(PARENT_ABS_PATH)" ; \
    cd $(PARENT_ABS_PATH) ; \

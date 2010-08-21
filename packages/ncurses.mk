@@ -19,8 +19,8 @@ ncurses_configure_args += --disable-widec --disable-colorfgbg \
 # Override normal install because we need to make links
 # include/term.h -> include/ncurses/term.h, etc.
 ncurses_install = \
-  $(PACKAGE_MAKE) $($(PACKAGE)_install_args) install ; \
-  cd $(PACKAGE_INSTALL_DIR)/include ; \
+  $(PACKAGE_MAKE) $($(PACKAGE)_install_args) DESTDIR=$(DESTDIR) install ; \
+  cd $(DESTDIR)/$(prefix)/include ; \
   for i in term.h ncurses.h curses.h ; do \
     ln -sf ncurses/$$i $$i ; \
   done
