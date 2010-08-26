@@ -18,45 +18,25 @@
 #
 # Andrei Agapi, September 2009.
  
-host_particle=$(if $(ARCH:native=),--host=$(TARGET),)
+db_top_srcdir = $(call find_source_fn,db)
+
+host_particle=$(if $(ARCH:native=),--build=$(NATIVE_ARCH)-linux-gnu --host=$(TARGET),)
 
 PARENT_ABS_PATH=$(shell dirname $(PACKAGE_BUILD_DIR))
 
-
-db_configure = \
-   echo "Building in $(PACKAGE_BUILD_DIR), host_particle=$(host_particle) ..." ; \
-   \
-   echo "if [ -e $(PARENT_ABS_PATH)/.db_copy ] ; then echo rm -rf $(PARENT_ABS_PATH)/.db_copy ; fi" ; \
-   if [ -e $(PARENT_ABS_PATH)/.db_copy ] ; then echo "rm -rf $(PARENT_ABS_PATH)/.db_copy" ; rm -rf $(PARENT_ABS_PATH)/.db_copy ; fi ; \
-   \
-   echo "cp -r $(MU_BUILD_ROOT_DIR)/../db $(PARENT_ABS_PATH)/.db_copy" ; \
-   cp -r $(MU_BUILD_ROOT_DIR)/../db $(PARENT_ABS_PATH)/.db_copy ; \
-   \
-   echo "cd $(PARENT_ABS_PATH)/.db_copy/build_unix" ; \
-   cd $(PARENT_ABS_PATH)/.db_copy/build_unix ; \
-   \
-   echo "../dist/configure --enable-o_direct --libdir=$(prefix)/$(arch_lib_dir) --prefix=$(prefix) $(host_particle)" ; \
-   ../dist/configure $(db_configure_args)  --enable-o_direct --libdir=$(prefix)/$(arch_lib_dir) --prefix=$(prefix) $(host_particle) ; \
-   \
-   echo "cd $(PARENT_ABS_PATH)" ; \
-   cd $(PARENT_ABS_PATH) ; \
-   \
-   echo "if [ -e $(PACKAGE_BUILD_DIR) ] ; then rm -rf $(PACKAGE_BUILD_DIR) ; fi" ; \
-   if [ -e $(PACKAGE_BUILD_DIR) ] ; then echo "rm -rf $(PACKAGE_BUILD_DIR)" ; rm -rf $(PACKAGE_BUILD_DIR) ; fi ; \
-   \
-   echo "ln -s $(PARENT_ABS_PATH)/.db_copy/build_unix $(PACKAGE_BUILD_DIR)" ; \
-   ln -s $(PARENT_ABS_PATH)/.db_copy/build_unix $(PACKAGE_BUILD_DIR) ; \
-   \
-   echo "cd $(MU_BUILD_ROOT_DIR)" ; \
-   cd $(MU_BUILD_ROOT_DIR)
-
-db_clean = \
-   echo "if [ -e $(PACKAGE_BUILD_DIR) ] ; then rm -rf $(PACKAGE_BUILD_DIR) ; fi" ; \
-   if [ -e $(PACKAGE_BUILD_DIR) ] ; then echo "rm -rf $(PACKAGE_BUILD_DIR)" ; rm -rf $(PACKAGE_BUILD_DIR) ; fi ; \
-   \
-   echo "if [ -e $(PARENT_ABS_PATH)/.db_copy ] ; then rm -rf $(PARENT_ABS_PATH)/.db_copy ; fi" ; \
-   if [ -e $(PARENT_ABS_PATH)/.db_copy ] ; then echo "rm -rf $(PARENT_ABS_PATH)/.db_copy" ; rm -rf $(PARENT_ABS_PATH)/.db_copy ; fi
-    
-
-#db_make = $(PACKAGE_BUILD_DIR)/build_unix/Makefile
-
+db_configure =								\
+   cd $(db_top_srcdir)/dist ;						\
+   if [ ! -f configure ] ; then						\
+      libtoolize ; aclocal -I aclocal ; autoconf ; autoheader ;		\
+   fi ;									\
+   echo "Building in $(PACKAGE_BUILD_DIR), "	;			\
+    echo " host_particle=$(host_particle) ..." ;			\
+   echo "cd $(PACKAGE_BUILD_DIR)" ;					\
+   cd $(PACKAGE_BUILD_DIR) ;						\
+   echo  "../dist/configure  --enable-o_direct " ;			\
+   echo  " --libdir=$(prefix)/$(arch_lib_dir)" ;			\
+   echo  " --prefix=$(prefix) "	;					\
+   echo  " $(host_particle)" ;						\
+   $(db_top_srcdir)/dist/configure --enable-o_direct			\
+      --libdir=$(prefix)/$(arch_lib_dir)	--prefix=$(prefix)	\
+      $(host_particle)
