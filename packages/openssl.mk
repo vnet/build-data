@@ -1,5 +1,5 @@
-# openssl depends on zlib
-openssl_configure_depend = zlib-install
+openssl_depend = zlib
+$(call pkgPhaseDependMacro,openssl)
 
 # Build shared libraries
 openssl_configure_flags = shared
@@ -32,12 +32,12 @@ OPENSSL_SHLIB_VERSION = ${shell \
   | cut --fields=3 --delimiter=' ' \
   | sed 's/"//g' }
 
+openssl_top_srcdir = $(call find_source_fn,openssl)
+
 openssl_make_args += LD='$(TARGET_PREFIX)ld' \
                      AR='$(TARGET_PREFIX)ar r' \
 	             CC='$(TARGET_PREFIX)gcc' \
                      RANLIB='$(TARGET_PREFIX)ranlib'
-
-openssl_make_args += LDFLAGS=$(call installed_libs_fn,zlib)
 
 # gives make errors
 openssl_make_parallel_fails = yes

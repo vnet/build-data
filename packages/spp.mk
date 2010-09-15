@@ -1,4 +1,6 @@
-spp_configure_depend = clib-install
+spp_depend = clib
+$(call pkgPhaseDependMacro,spp)
 
-spp_CPPFLAGS = $(call installed_includes_fn, clib)
-spp_LDFLAGS = $(call installed_libs_fn, clib)
+spp_CPPFLAGS = -I$(clib_top_srcdir)
+
+spp_LDFLAGS = -L$(BUILD_DIR)/clib/.libs
