@@ -27,4 +27,4 @@ gdb_configure_args += --disable-werror
 gdb_target = $(TARGET)
 
 gdb_configure_host_and_target = \
-  --build=local --host=$(TARGET) --target=$(gdb_target)
+  --host=$(TARGET) --target=$(gdb_target)
