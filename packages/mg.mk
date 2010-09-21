@@ -1,5 +1,6 @@
-mg_configure_depend = ncurses-install
+mg_depend = ncurses
+$(call pkgPhaseDependMacro,mg)
 
-mg_CPPFLAGS = $(call installed_includes_fn, ncurses)
+mg_CPPFLAGS = -I$(BUILD_DIR)/ncurses/include -I$(ncurses_top_srcdir)/include
 
-mg_LDFLAGS = $(call installed_libs_fn, ncurses)
+mg_LDFLAGS = -L$(BUILD_DIR)/ncurses/lib

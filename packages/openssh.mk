@@ -1,11 +1,11 @@
-openssh_configure_depend = openssl-install zlib-install
+#special case:
+openssh_configure_depend = openssl-install
+openssh_build_depend = openssl-install
 
-openssh_CPPFLAGS += $(call installed_includes_fn,zlib openssl)
+openssh_CPPFLAGS = $(call installed_includes_fn,zlib openssl)
+
 openssh_LDFLAGS = $(call installed_libs_fn,zlib)
-
-# openssl does not honor lib64 for biarch platforms so we can't use
-# installed_libs_fn
-openssh_LDFLAGS += -L$(INSTALL_DIR)/openssl/lib
+openssh_LDFLAGS += -L$(BUILD_DIR)/openssl
 
 # Insure correct paths
 openssh_configure_args = --prefix=/usr --libdir=/lib --sysconfdir=/etc/ssh
