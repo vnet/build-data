@@ -21,7 +21,8 @@ LINUX_MAKE = \
 linux_config_files_for_platform =							\
   $(call find_package_file_fn,linux,linux-default-$(LINUX_MAKEFILE_ARCH).config)	\
   $(call find_package_file_fn,linux,linux-$(ARCH).config)				\
-  $(call find_package_file_fn,linux,linux-$(PLATFORM).config)
+  $(call find_package_file_fn,linux,linux-$(PLATFORM).config)				\
+  $(call find_package_file_fn,linux,linux-$(linux_config_override_$(PLATFORM)).config)
 
 # Copy pre-built linux config into compile directory
 # Move include files to install area for compiling glibc
@@ -50,6 +51,9 @@ linux_configure =									\
 
 # kernel configure depends on config file fragments for platform
 linux_configure_depend = $(linux_config_files_for_platform)
+
+# platforms.mk can change linux configs
+linux_configure_depend += $(foreach d,$(SOURCE_PATH_BUILD_DATA_DIRS),$(d)/platforms.mk)
 
 # ARCH dependent initrd
 linux_initrd_powerpc = arch/powerpc/boot/ramdisk.image.gz
