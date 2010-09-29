@@ -1,4 +1,5 @@
-svm_depend = clib
-$(call pkgPhaseDependMacro,svm)
-
 svm_top_srcdir = $(call find_source_fn,svm)
+svm_configure_depend = clib-install
+
+svm_CPPFLAGS = $(call installed_includes_fn, clib)
+svm_LDFLAGS = $(call installed_libs_fn, clib)

@@ -1,7 +1,7 @@
-bash_make_parallel_fails = sometimes
+bash_configure_depend = ncurses-install
 
-bash_depend = ncurses
-$(call pkgPhaseDependMacro,bash)
+bash_CPPFLAGS = $(call installed_includes_fn, ncurses)
+bash_LDFLAGS = $(call installed_libs_fn, ncurses)
 
 bash_configure_args = --without-bash-malloc --disable-multibyte
 
@@ -13,3 +13,5 @@ bash_configure_env = bash_cv_getcwd_malloc=yes
 
 bash_image_exclude = bin/bashbug
 bash_image_install = ln -sf /bin/bash bin/sh
+
+bash_make_parallel_fails = sometimes
