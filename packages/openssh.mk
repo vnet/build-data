@@ -1,11 +1,4 @@
-#special case:
-openssh_configure_depend = openssl-install
-openssh_build_depend = openssl-install
-
-openssh_CPPFLAGS = $(call installed_includes_fn,zlib openssl)
-
-openssh_LDFLAGS = $(call installed_libs_fn,zlib)
-openssh_LDFLAGS += -L$(BUILD_DIR)/openssl
+openssh_configure_depend = zlib-install openssl-install
 
 # Insure correct paths
 openssh_configure_args = --prefix=/usr --libdir=/lib --sysconfdir=/etc/ssh

@@ -1,1 +1,1 @@
-atftp_CPPFLAGS = -I$(readline_top_srcdir)
+atftp_configure_depend = readline-install

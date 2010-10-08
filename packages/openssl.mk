@@ -1,5 +1,4 @@
-openssl_depend = zlib
-$(call pkgPhaseDependMacro,openssl)
+openssl_configure_depend = zlib-install
 
 # Build shared libraries
 openssl_configure_flags = shared
@@ -26,14 +25,6 @@ openssl_configure = \
     -I$(INSTALL_DIR)/zlib/include \
     $(openssl_configure_flags)
 
-OPENSSL_SHLIB_VERSION = ${shell \
-  grep 'define SHLIB_VERSION_NUMBER' \
-       $(call find_source_fn,openssl)/crypto/opensslv.h \
-  | cut --fields=3 --delimiter=' ' \
-  | sed 's/"//g' }
-
-openssl_top_srcdir = $(call find_source_fn,openssl)
-
 openssl_make_args += LD='$(TARGET_PREFIX)ld' \
                      AR='$(TARGET_PREFIX)ar r' \
 	             CC='$(TARGET_PREFIX)gcc' \
@@ -42,12 +33,9 @@ openssl_make_args += LD='$(TARGET_PREFIX)ld' \
 # gives make errors
 openssl_make_parallel_fails = yes
 
-openssl_image_include = echo bin $(arch_lib_dir) ssl
-openssl_image_exclude = $(arch_lib_dir)/lib*.a
+# without the install_sw we get all the docs which we don't want
+openssl_install = $(PACKAGE_MAKE) $(openssl_install_args) install_sw
 
-openssl_post_install =							    \
-  if [ "$(arch_lib_dir)" != "lib" ] ; then				    \
-     mkdir -p $(PACKAGE_INSTALL_DIR)/$(arch_lib_dir) ;			    \
-     cd $(PACKAGE_INSTALL_DIR)/lib		     ;			    \
-     tar cf - . | ( cd $(PACKAGE_INSTALL_DIR)/$(arch_lib_dir); tar xf - ) ; \
-  fi 
+openssl_image_include = echo bin $(arch_lib_dir) ssl
+openssl_image_exclude = $(arch_lib_dir)/lib*.a bin/openssl
+

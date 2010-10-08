@@ -1,8 +1,5 @@
 gdb_configure_depend = ncurses-install
 
-gdb_cross_LDFLAGS = $(call installed_libs_fn, ncurses)
-gdb_cross_CPPFLAGS = $(call installed_includes_fn, ncurses)
-
 gdb_cross_env += LDFLAGS=$(gdb_cross_LDFLAGS)
 gdb_cross_env += CPPFLAGS=$(gdb_cross_CPPFLAGS)
 gdb_cross_env += CFLAGS="-g -O2 $(gdb_cross_CPPFLAGS) $(gdb_cross_LDFLAGS)"

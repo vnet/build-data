@@ -1,8 +1,5 @@
 bash_configure_depend = ncurses-install
 
-bash_CPPFLAGS = $(call installed_includes_fn, ncurses)
-bash_LDFLAGS = $(call installed_libs_fn, ncurses)
-
 bash_configure_args = --without-bash-malloc --disable-multibyte
 
 #this will cause getcwd to be picked up from glibc, not bash libraries.
