@@ -39,13 +39,6 @@ sfslite_configure_depend += gmp-install
 
 #### jadfix for elog points ####
 
-sfslite_CPPFLAGS = -I$(elog_top_srcdir) -I$(BUILD_DIR)/gmp #-DHAVE_GMP_CXX_OPS
-sfslite_CPPFLAGS += -DELOGGING=1
-
-sfslite_LDFLAGS = -L$(BUILD_DIR)/elog/.libs  -lpthread -lrt
-
-sfslite_top_srcdir = $(call find_source_fn,sfslite)
-
 sfslite_configure_args += --with-sfsmisc
 
 sfslite_configure_args += --with-mode=lite
@@ -63,6 +56,5 @@ sfslite_configure_args += --with-pthreads=$(INSTALL_DIR)/../tools/$(TARGET)
 ##sfslite_configure_args += "CXXDEBUG=-g -O0"
 ##sfslite_configure_args += "DEBUG=-g -O0"
 
-sfslite_configure_args += "CFLAGS=-g -O3 $(sfslite_CPPFLAGS)"
-sfslite_configure_args += "CXXFLAGS=-g -O3 $(sfslite_CPPFLAGS)"
-sfslite_configure_args += "LDFLAGS=$(sfslite_LDFLAGS)"
+###sfslite_configure_args += "CFLAGS=-g -O3"
+###sfslite_configure_args += "CXXFLAGS=-g -O3"
