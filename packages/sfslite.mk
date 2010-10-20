@@ -39,6 +39,8 @@ sfslite_configure_depend += gmp-install
 
 #### jadfix for elog points ####
 
+sfslite_top_srcdir = $(call find_source_fn,sfslite)
+
 sfslite_configure_args += --with-sfsmisc
 
 sfslite_configure_args += --with-mode=lite
