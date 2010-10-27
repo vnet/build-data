@@ -41,3 +41,11 @@ openssl_make_parallel_fails = yes
 openssl_image_include = echo bin $(arch_lib_dir) ssl
 openssl_image_exclude = $(arch_lib_dir)/lib*.a bin/openssl
 
+# FIXME - this is a hack
+openssl_post_install =							    \
+  if [ "$(arch_lib_dir)" != "lib" ] ; then				    \
+     mkdir -p $(PACKAGE_INSTALL_DIR)/$(arch_lib_dir) ;			    \
+     cd $(PACKAGE_INSTALL_DIR)/lib		     ;			    \
+     tar cf - . | ( cd $(PACKAGE_INSTALL_DIR)/$(arch_lib_dir); tar xf - ) ; \
+  fi 
+# END FIXME
