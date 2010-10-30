@@ -3,7 +3,8 @@ uio-pci-dma_configure = 				\
   mkdir -p $(PACKAGE_BUILD_DIR) ;			\
   ln -sf $(call find_source_fn,uio-pci-dma)/* $(PACKAGE_BUILD_DIR)
 
-uio-pci-dma_build_depend = $(if $(is_native),,linux-build)
+# Eliot FIXME: this causes a recursive fakeroot screw-up
+uio-pci-dma_configure_depend = # $(if $(is_native),,linux-build)
 
 # point module at linux kernel
 uio-pci-dma_make_vars = \
