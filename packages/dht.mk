@@ -5,7 +5,7 @@
 # Originally: had to do this: ./configure --with-sfs=$deploy_dir/sfslite-0.8.17_bin --with-db=$deploy_dir/db_bin [ --with-gmp=$deploy_dir/gmp ]  --prefix=$deploy_dir/dht_bin
 # Now: If not overriden below, configure was modified s.t. with-sfs and with-db default to ppc7450 ebuild dirs (currently build-root/install-ppc7450
 # ($)/sfslite and ($)/db respectively); also, gmp is looked up; but again, they are all overridden below.
-dht_depend = db sfslite nconfd-ulib
+dht_depend = db sfslite nconfd nconfd-ulib
 $(call pkgPhaseDependMacro,dht)
 
 dht_top_srcdir = $(call find_source_fn,dht)
