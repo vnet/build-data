@@ -1,1 +1,1 @@
-vlib_configure_depend = clib-install
+vlib_configure_depend = clib-install uio-pci-dma-install
