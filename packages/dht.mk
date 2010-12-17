@@ -16,7 +16,9 @@ dht_CPPFLAGS += -I$(BUILD_DIR)/db
 dht_CPPFLAGS += -I$(nconfd_top_srcdir)/linux-$(nconfd_arch)/include
 dht_CPPFLAGS += -I$(nconfd-lib_top_srcdir) -I$(nconfd-ulib_top_srcdir)
 
-dht_LDFLAGS = -L$(BUILD_DIR)/elog -L$(BUILD_DIR)/nconfd-ulib
+dht_LDFLAGS = -L$(BUILD_DIR)/elog -L$(BUILD_DIR)/nconfd-ulib \
+	      -L$(BUILD_DIR)/qnanny -L$(BUILD_DIR)/svm -L$(BUILD_DIR)/clib
+
 
 dht_configure_args += --with-db
 
@@ -41,4 +43,7 @@ dht_configure_args += "CXXFLAGS=-g -O3"
 dht_make_args += NCONFD_ULIB=$(call find_source_fn,nconfd-ulib)
 dht_make_args += CONFD_DIR=$(call package_install_dir_fn,nconfd)
 dht_make_args += CONFD_ULIB_DIR=$(call package_install_dir_fn,nconfd-ulib)
+dht_make_args += QNANNY_DIR=$(call package_install_dir_fn,qnanny)
+dht_make_args += SVM_DIR=$(call package_install_dir_fn,svm)
+dht_make_args += CLIB_DIR=$(call package_install_dir_fn,clib)
 
