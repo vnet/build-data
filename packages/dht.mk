@@ -5,7 +5,7 @@
 # Originally: had to do this: ./configure --with-sfs=$deploy_dir/sfslite-0.8.17_bin --with-db=$deploy_dir/db_bin [ --with-gmp=$deploy_dir/gmp ]  --prefix=$deploy_dir/dht_bin
 # Now: If not overriden below, configure was modified s.t. with-sfs and with-db default to ppc7450 ebuild dirs (currently build-root/install-ppc7450
 # ($)/sfslite and ($)/db respectively); also, gmp is looked up; but again, they are all overridden below.
-dht_depend = db sfslite nconfd-ulib
+dht_depend = db sfslite nconfd nconfd-ulib svm clib
 $(call pkgPhaseDependMacro,dht)
 
 dht_top_srcdir = $(call find_source_fn,dht)
@@ -15,6 +15,7 @@ dht_CPPFLAGS += -I$(BUILD_DIR)/db
 
 dht_CPPFLAGS += -I$(nconfd_top_srcdir)/linux-$(nconfd_arch)/include
 dht_CPPFLAGS += -I$(nconfd-lib_top_srcdir) -I$(nconfd-ulib_top_srcdir)
+dht_CPPFLAGS += -I$(svm_top_srcdir) -I$(clib_top_srcdir)
 
 dht_LDFLAGS = -L$(BUILD_DIR)/elog -L$(BUILD_DIR)/nconfd-ulib \
 	      -L$(BUILD_DIR)/qnanny -L$(BUILD_DIR)/svm -L$(BUILD_DIR)/clib
@@ -44,6 +45,9 @@ dht_make_args += NCONFD_ULIB=$(call find_source_fn,nconfd-ulib)
 dht_make_args += CONFD_DIR=$(call package_install_dir_fn,nconfd)
 dht_make_args += CONFD_ULIB_DIR=$(call package_install_dir_fn,nconfd-ulib)
 dht_make_args += QNANNY_DIR=$(call package_install_dir_fn,qnanny)
-dht_make_args += SVM_DIR=$(call package_install_dir_fn,svm)
-dht_make_args += CLIB_DIR=$(call package_install_dir_fn,clib)
+#dht_make_args += SVM_DIR=$(call package_install_dir_fn,svm)
+#dht_make_args += CLIB_DIR=$(call package_install_dir_fn,clib)
+
+dht_make_args += SVM_DIR=$(BUILD_DIR)/svm/.libs
+dht_make_args += CLIB_DIR=$(BUILD_DIR)/clib/.libs
 
