@@ -1,4 +1,4 @@
-quagga_build_depend = routing-sw-install orcm-cisco-install
+quagga_build_depend = routing-sw-install
 
 quagga_configure_args += --disable-zebra
 quagga_configure_args += --disable-doc
@@ -12,12 +12,18 @@ quagga_CPPFLAGS = $(call installed_includes_fn, routing-sw)
 quagga_CPPFLAGS += $(call installed_includes_fn, orcm-cisco)/openrcm
 quagga_CPPFLAGS += $(call installed_includes_fn, orcm-cisco)/openrcm/include
 quagga_CPPFLAGS += $(call installed_includes_fn, ompi-cisco)/openmpi
+quagga_CPPFLAGS += $(call installed_includes_fn, nconfd-ulib)
+quagga_CPPFLAGS += $(call installed_includes_fn, nconfd)
+quagga_CPPFLAGS += -I$(call find_source_fn,routing-sw)/include
+quagga_CPPFLAGS += -I$(BUILD_DIR)/routing-sw/routing/bgp
 
 quagga_LDFLAGS = $(call installed_libs_fn, routing-sw)
+quagga_LDFLAGS += $(call installed_libs_fn, nconfd_ulib)
+quagga_LDFLAGS += $(call installed_libs_fn, nconfd-lib)
 quagga_LDFLAGS += -L$(INSTALL_DIR)/orcm-cisco/lib \
 		  -L$(INSTALL_DIR)/ompi-cisco/lib
 
-quagga_CFLAGS += -g -DUSE_QYAL
+quagga_CFLAGS += -g -DUSE_QYAL -DCAVEMAN
 
 quagga_image_include = echo bin etc lib*
 
