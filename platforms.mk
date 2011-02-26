@@ -10,3 +10,5 @@
 
 # is linux based? defaults to yes
 # example_uses_linux = no
+
+quagga_pacman_packages = quagga
