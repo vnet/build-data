@@ -7,6 +7,7 @@ quagga_configure_args += --disable-ripngd
 quagga_configure_args += --disable-ospfd
 quagga_configure_args += --disable-ospf6d
 quagga_configure_args += --disable-watchquagga
+quagga_configure_args += --disable-pie
 
 quagga_CPPFLAGS = $(call installed_includes_fn, routing-sw)
 quagga_CPPFLAGS += $(call installed_includes_fn, orcm-cisco)/openrcm
