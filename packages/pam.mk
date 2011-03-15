@@ -1,3 +1,8 @@
+pam_configure_depend = flex-install
+
+pam_CPPFLAGS = $(call installed_includes_fn, flex)
+pam_LDFLAGS = $(call installed_libs_fn, flex)
+
 pam_configure_args = --disable-static
 
 # pam local functions for image install
