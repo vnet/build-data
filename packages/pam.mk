@@ -5,6 +5,8 @@ pam_LDFLAGS = $(call installed_libs_fn, flex)
 
 pam_configure_args = --disable-static
 
+pam_configure_args += --includedir=$(PACKAGE_INSTALL_DIR)/include/security
+
 # pam local functions for image install
 pam_security_find_shared_libs_fn = \
   find $(1) \
