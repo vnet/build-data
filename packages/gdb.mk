@@ -1,10 +1,7 @@
-gdb_configure_depend = ncurses-install
+gdb_configure_depend = ncurses-install zlib-install
 
-gdb_cross_env += LDFLAGS=$(gdb_cross_LDFLAGS)
-gdb_cross_env += CPPFLAGS=$(gdb_cross_CPPFLAGS)
-gdb_cross_env += CFLAGS="-g -O2 $(gdb_cross_CPPFLAGS) $(gdb_cross_LDFLAGS)"
-
-gdb_configure_env = $(gdb_cross_env)
+gdb_LDFLAGS = $(call installed_libs_fn, ncurses zlib)
+gdb_CPPFLAGS = $(call installed_includes_fn, ncurses zlib)
 
 gdb_configure_args = --disable-nls
 gdb_configure_args += --disable-multi-ice
@@ -17,6 +14,8 @@ gdb_configure_args += --with-mmalloc=no
 gdb_configure_args += --with-included-regex=no
 gdb_configure_args += --with-included-gettext=no
 gdb_configure_args += --with-uiout=no
+gdb_configure_args += --without-expat
+gdb_configure_args += --with-curses
 
 # gdb currently does not compile with -Werror for gcc-3.4.2
 gdb_configure_args += --disable-werror
