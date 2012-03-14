@@ -1,2 +1,5 @@
 vlib_configure_depend = clib-install uio-pci-dma-install-headers
 
+vlib_CPPFLAGS = $(call installed_includes_fn, clib uio-pci-dma)
+vlib_LDFLAGS = $(call installed_libs_fn, clib)
+

@@ -13,7 +13,7 @@ LINUX_ARCH = \
 linux_build_dir = linux-$(PLATFORM)
 
 LINUX_MAKE = \
-  $(MAKE) -C $(call find_source_fn,linux) \
+  $(MAKE) -C $(call find_source_fn,$(PACKAGE_SOURCE)) \
     O=$(PACKAGE_BUILD_DIR) \
     ARCH=$(LINUX_ARCH) \
     CROSS_COMPILE=$(TARGET)-

@@ -11,4 +11,7 @@
 # is linux based? defaults to yes
 # example_uses_linux = no
 
-quagga_pacman_packages = quagga
+c6x_arch = c6x
+c6x_target = tic6x-linux
+c6x_linux_source = linux-c6x
+c6x_libc = uclibc
