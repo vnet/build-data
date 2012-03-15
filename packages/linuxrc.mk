@@ -39,56 +39,55 @@ if_eq_then_fn = $(if $(subst $(1),,$(2)),,$(3))
 
 # linuxrc_install_depend += $(call if_eq_then_fn,$(linuxrc_initrd_type),ext2,$(PLATFORM_IMAGE_DIR)/ro.img)
 
-linuxrc_initrd_image_install =							\
-  @$(BUILD_ENV) ;								\
+linuxrc_initrd_image_install =									\
+  @$(BUILD_ENV) ;										\
   linuxrc_install_dir=$(call package_install_dir_fn,linuxrc) ;					\
-  initrd_img="$${linuxrc_install_dir}/initrd.$(linuxrc_initrd_type)" ;		\
-  rm -f $${initrd_img} ;							\
-  : make platform-independant part of initrd ;					\
-  conf="$(call find_package_file_fn,linuxrc,linuxrc.conf.spp)" ;		\
-  if [ ! -f "$${conf}" ] ; then							\
-    $(call build_msg_fn,Failed to find linuxrc.conf.spp in source path) ;	\
-    exit 1;									\
-  fi ;										\
-  : strip linuxrc symbols ;							\
-  linuxrc_tmp="`mktemp $${linuxrc_install_dir}/linuxrc-exe-XXXXX`" ;		\
-  cp $${linuxrc_install_dir}/usr/libexec/linuxrc $${linuxrc_tmp} ;		\
-  chmod +x $${linuxrc_tmp} ;							\
-  $(TARGET)-strip $${linuxrc_tmp} ;						\
-  : sign the linuxrc executable ;						\
-  if [ "$(sign_executables)" = 'yes'					\
-          -a -n "$($(PLATFORM)_public_key)" ] ; then				\
-    sign $($(PLATFORM)_public_key) $($(PLATFORM)_private_key_passphrase) $${linuxrc_tmp} ;				\
-  fi ;										\
-  : use pre-processor to generate conf file ;					\
-  conf_tmp="`mktemp $${linuxrc_install_dir}/linuxrc-conf-XXXXX`" ;		\
-  env LINUXRC_INITRD_TYPE=$(linuxrc_initrd_type)				\
-    spp -o $${conf_tmp} $${conf} ;						\
-  : now build image ;								\
-  tmp_dir="`mktemp -d $${linuxrc_install_dir}/linuxrc-image-XXXXXX`" ;		\
-  chmod 0755 $${tmp_dir} ;							\
-  trap "rm -rf $${tmp_dir}" err ;						\
-  fakeroot /bin/bash -c "{							\
-    set -eu$(BUILD_DEBUG) ;							\
-    cd $${tmp_dir} ;								\
-    $(linuxrc_makedev) ;							\
-    sh $${linuxrc_install_dir}/sbin/mkinitrd					\
-      -o $${tmp_dir}								\
-      -d $${tmp_dir}/dev							\
-      -l $${linuxrc_tmp}							\
-      -c $${conf_tmp} ;								\
-    : embedd read-only image for ext2 ;						\
-    if [ "$(linuxrc_initrd_type)" = "ext2" ] ; then				\
-      $(call rw_image_embed_ro_image_fn,ro.img) ;				\
-    fi ;									\
-    : add platform dependent stuff to initrd ;					\
-    if [ ! -z "$(linuxrc_platform_script)" ] ; then				\
-      . $(linuxrc_platform_script) ;						\
-    fi ;									\
-    $(call linuxrc_make_initrd_fn_$(linuxrc_initrd_type),			\
-	$${tmp_dir},$${initrd_img}) ;						\
-  }" ;										\
-  : cleanup tmp directory ;							\
+  initrd_img="$${linuxrc_install_dir}/initrd.$(linuxrc_initrd_type)" ;				\
+  rm -f $${initrd_img} ;									\
+  : make platform-independant part of initrd ;							\
+  conf="$(call find_package_file_fn,linuxrc,linuxrc.conf.spp)" ;				\
+  if [ ! -f "$${conf}" ] ; then									\
+    $(call build_msg_fn,Failed to find linuxrc.conf.spp in source path) ;			\
+    exit 1;											\
+  fi ;												\
+  : strip linuxrc symbols ;									\
+  linuxrc_tmp="`mktemp $${linuxrc_install_dir}/linuxrc-exe-XXXXX`" ;				\
+  cp $${linuxrc_install_dir}/usr/libexec/linuxrc $${linuxrc_tmp} ;				\
+  chmod +x $${linuxrc_tmp} ;									\
+  $(TARGET)-strip $${linuxrc_tmp} ;								\
+  : sign the linuxrc executable ;								\
+  if [ "$(sign_executables)" = 'yes' ] ; then							\
+    sign $($(PLATFORM)_public_key) $($(PLATFORM)_private_key_passphrase) $${linuxrc_tmp} ;	\
+  fi ;												\
+  : use pre-processor to generate conf file ;							\
+  conf_tmp="`mktemp $${linuxrc_install_dir}/linuxrc-conf-XXXXX`" ;				\
+  env LINUXRC_INITRD_TYPE=$(linuxrc_initrd_type)						\
+    spp -o $${conf_tmp} $${conf} ;								\
+  : now build image ;										\
+  tmp_dir="`mktemp -d $${linuxrc_install_dir}/linuxrc-image-XXXXXX`" ;				\
+  chmod 0755 $${tmp_dir} ;									\
+  trap "rm -rf $${tmp_dir}" err ;								\
+  fakeroot /bin/bash -c "{									\
+    set -eu$(BUILD_DEBUG) ;									\
+    cd $${tmp_dir} ;										\
+    $(linuxrc_makedev) ;									\
+    sh $${linuxrc_install_dir}/sbin/mkinitrd							\
+      -o $${tmp_dir}										\
+      -d $${tmp_dir}/dev									\
+      -l $${linuxrc_tmp}									\
+      -c $${conf_tmp} ;										\
+    : embedd read-only image for ext2 ;								\
+    if [ "$(linuxrc_initrd_type)" = "ext2" ] ; then						\
+      $(call rw_image_embed_ro_image_fn,ro.img) ;						\
+    fi ;											\
+    : add platform dependent stuff to initrd ;							\
+    if [ ! -z "$(linuxrc_platform_script)" ] ; then						\
+      . $(linuxrc_platform_script) ;								\
+    fi ;											\
+    $(call linuxrc_make_initrd_fn_$(linuxrc_initrd_type),					\
+	$${tmp_dir},$${initrd_img}) ;								\
+  }" ;												\
+  : cleanup tmp directory ;									\
   echo rm -rf $${tmp_dir}
 
 $(linuxrc_initrd_image): linuxrc-install

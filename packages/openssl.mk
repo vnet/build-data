@@ -36,8 +36,5 @@ openssl_install = $(PACKAGE_MAKE) $(openssl_install_args) install_sw
 # gives make errors
 openssl_make_parallel_fails = yes
 
-# without the install_sw we get all the docs which we don't want
-openssl_install = $(PACKAGE_MAKE) $(openssl_install_args) install_sw
-
 openssl_image_include = echo bin $(arch_lib_dir) ssl
 openssl_image_exclude = $(arch_lib_dir)/lib*.a bin/openssl

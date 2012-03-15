@@ -1,5 +1,5 @@
 # more etc. use -lncurses
-util-linux_configure_depend = ncurses-install
+util-linux_configure_depend = ncurses-install pam-install
 
 # we use sysvinit
 util-linux_configure_args += --disable-init
@@ -24,14 +24,6 @@ util-linux_configure_args += --enable-login-utils
 
 # otherwise chgrp fails on make install
 util-linux_configure_args += --disable-use-tty-group
-
-util-linux_CPPFLAGS = $(call installed_includes_fn, ncurses)
-util-linux_LDFLAGS = $(call installed_libs_fn, ncurses)
-
-# pam disabled for now
-util-linux_configure_args += --without-pam
-# util-linux_CPPFLAGS += $(call installed_includes_fn, pam)
-# util-linux_LDFLAGS += $(call installed_libs_fn, pam)
 
 util-linux_image_include =					\
   echo bin/dmesg bin/login bin/more bin/mount bin/umount ;	\

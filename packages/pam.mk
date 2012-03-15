@@ -1,11 +1,12 @@
-pam_configure_depend = flex-install
-
-pam_CPPFLAGS = $(call installed_includes_fn, flex)
-pam_LDFLAGS = $(call installed_libs_fn, flex)
+pam_configure_depend = flex-install libtirpc-install
 
 pam_configure_args = --disable-static
 
 pam_configure_args += --includedir=$(PACKAGE_INSTALL_DIR)/include/security
+
+pam_configure_env = libtirpc_LIBS="$(call installed_libs_fn,libtirpc)" libtirpc_CFLAGS="$(call installed_includes_fn,libtirpc)"
+
+pam_make_args = NIS_LIBS=-ltirpc
 
 # pam local functions for image install
 pam_security_find_shared_libs_fn = \
@@ -21,7 +22,7 @@ pam_image_install = \
   $(BUILD_ENV) ; \
   tmp=$(IMAGE_INSTALL_DIR) ; \
   cd $(2) ; \
-  t="`$(pam_security_image_copy) ; \
+  t="`$(pam_security_select_files) ; \
       echo "" ; \
       exit 0 ;`" ; \
   [[ -z "$$t" ]] || tar cf - $$t | tar xf - -C $${tmp} ;

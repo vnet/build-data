@@ -3,6 +3,8 @@ inetutils_configure_args = --localstatedir=/var
 # 1.8 wont cross compile without this
 inetutils_configure_args += --with-path-procnet-dev=/proc/net/dev
 
+inetutils_make_args = HELP2MAN=echo
+
 # garbage collect a bunch of stuff we are unlikely to want
 inetutils_image_exclude =			\
   libexec/ftpd					\
@@ -21,4 +23,3 @@ inetutils_image_exclude += bin/ifconfig
 
 # we use xinetd so nuke inetd
 inetutils_image_exclude += libexec/inetd
-
