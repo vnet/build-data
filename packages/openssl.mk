@@ -21,6 +21,7 @@ openssl_configure = \
     ${shell case '$(BASIC_ARCH)' in \
           (i?86) echo linux-elf ;; \
 	  (ppc) echo linux-ppc ;; \
+	  (tic6x) echo linux-tic6x ;; \
           (*) echo 'linux-$(NATIVE_ARCH)' ;; esac } \
     -I$(INSTALL_DIR)/zlib/include \
     $(openssl_configure_flags)
