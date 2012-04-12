@@ -1,0 +1,9 @@
+set timeout=5
+set default=0
+menuentry 'iso' {quote \{}
+          linux /boot/bzImage {ISO_BOOT_OPTIONS}
+          initrd /boot/initrd.{INITRD_TYPE}
+{quote \}}
+menuentry 'nfs' {quote \{}
+          linux /boot/bzImage {NFS_BOOT_OPTIONS}
+{quote \}}
